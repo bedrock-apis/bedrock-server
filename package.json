@@ -1,0 +1,32 @@
+{
+  "name": "bedrock-server",
+  "version": "1.0.0",
+  "description": "Bedrock server with protocol",
+  "main": "dist/index.js",
+  "repository": "git+https://github.com/bedrock-apis/bedrock-server.git",
+  "author": "conmaster2112",
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn workspaces run build",
+    "format": "yarn workspaces run format",
+    "lint": "yarn workspaces run lint"
+  },
+  "bugs": {
+    "url": "https://github.com/bedrock-apis/bedrock-server/issues"
+  },
+  "homepage": "https://github.com/bedrock-apis/bedrock-server#readme",
+  "workspaces": [
+    "@bedrock/*"
+  ],
+  "private": true,
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "eslint": "^8.56.0",
+    "eslint-config-neon": "^0.1.57",
+    "eslint-formatter-pretty": "^6.0.1",
+    "nodemon": "^3.0.3",
+    "prettier": "3.2.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
