@@ -369,6 +369,52 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.7.2.tgz#2d4260033e199b3032a08b41348ac10de21c47e9"
   integrity sha512-RbhOOTCNoCrbfkRyoXODZp75MlpiHMgbE5MEBZAnnnLyQNgrigEj4p0lzsMDyc1zVsJDLrivB58tgg3emX0eEA==
 
+"@serenityjs/binarystream-darwin-x64@1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@serenityjs/binarystream-darwin-x64/-/binarystream-darwin-x64-1.2.3.tgz#333618971337101f67f4754bde202b0b83b25dd7"
+  integrity sha512-bZ/4T0KktNvL5O9N0D0bLGZlfnqKeEDj8fCsZdyeCrNj9MWheRAYpR5HY0e2fDlvXXZ5B/kUJ05JMEt4s255nQ==
+
+"@serenityjs/binarystream-linux-x64-gnu@1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@serenityjs/binarystream-linux-x64-gnu/-/binarystream-linux-x64-gnu-1.2.3.tgz#de7b5b2b2837562c19cdaf22ebc92fa36a16361f"
+  integrity sha512-eYlSf5YEOSMY/Ce6Fb6JkUrG9oGONyWiRN4G4g7p6ZsqyapDVgVJx3Yd/2RIjuhSAjkvk1z7LxnZJJFf8i3+6g==
+
+"@serenityjs/binarystream-win32-x64-msvc@1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@serenityjs/binarystream-win32-x64-msvc/-/binarystream-win32-x64-msvc-1.2.3.tgz#d80fea25af1af58a61ca3ae66d6bcd53920a2763"
+  integrity sha512-FLunUGVk3d6vF62CEc7aO/UK8csGzNnFfXp+Yjn5c/R0KJypyxB5TXobwOgNe1wk2hRATYBRkuRABKkRRutPEQ==
+
+"@serenityjs/binarystream@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@serenityjs/binarystream/-/binarystream-1.2.3.tgz#82fcbca31d3e7e71821789ba84362189c8d40fdb"
+  integrity sha512-JH01RdFFXAKudaMJybiafJISLANHH/kjl7nS6pA0oXu8LlvXVvVHl6ZMkVKjO2rBAhQdhdp/CELFet7ZRLH9FQ==
+  optionalDependencies:
+    "@serenityjs/binarystream-darwin-x64" "1.2.3"
+    "@serenityjs/binarystream-linux-x64-gnu" "1.2.3"
+    "@serenityjs/binarystream-win32-x64-msvc" "1.2.3"
+
+"@serenityjs/raknet-protocol@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@serenityjs/raknet-protocol/-/raknet-protocol-1.0.5.tgz#856743830aa85e1408e0efc39946ab636cf5ffd2"
+  integrity sha512-mdVdhdrBdX/gDHKP9QuRtF3bI4gKc4A5FHj3js6FYf5o38+AF//JZQJ9S7f7QdfiNnNRyBMESqnKsdWJmuMbgg==
+  dependencies:
+    "@serenityjs/binarystream" "^1.2.3"
+    reflect-metadata "^0.1.13"
+
+"@serenityjs/raknet-server@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@serenityjs/raknet-server/-/raknet-server-1.0.8.tgz#0cfe5e321ae7e55337af8e5e128eff29af9a8364"
+  integrity sha512-f0BKZi/3GC6rIwq0cOa0gqGKMN04mqySTCmKXW8bIhGR2BSkH/eyoyF+5MWFXRZzEEre63SwIzxV0gRqCdKTjg==
+  dependencies:
+    "@serenityjs/binarystream" "^1.2.3"
+    "@serenityjs/raknet-protocol" "^1.0.5"
+    "@serenityjs/raknet-socket" "^1.0.6"
+
+"@serenityjs/raknet-socket@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@serenityjs/raknet-socket/-/raknet-socket-1.0.6.tgz#7f76c9e6b5e7096e3c4d6a4ff1c89a71e386b5af"
+  integrity sha512-byc3Fg/d83YjwgTkdaMrfx3BUElrKaR4FJGA9i+EjTQ34U4SGx4alq1ls9yt1hLVkAW2SzneTdLrL/RTo+XmEg==
+
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@tsconfig/node10/-/node10-1.0.9.tgz#df4907fc07a886922637b15e02d4cebc4c0021b2"
@@ -3616,6 +3662,11 @@ readdirp@~3.6.0:
   integrity sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==
   dependencies:
     picomatch "^2.2.1"
+
+reflect-metadata@^0.1.13:
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.14.tgz#24cf721fe60677146bb77eeb0e1f9dece3d65859"
+  integrity sha512-ZhYeb6nRaXCfhnndflDK8qI6ZQ/YcWZCISRAWICW9XYqMUwjZM9Z0DveWX/ABN01oxSHwVxKQmxeYZSsm0jh5A==
 
 reflect.getprototypeof@^1.0.4:
   version "1.0.4"
