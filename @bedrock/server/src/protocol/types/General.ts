@@ -10,7 +10,11 @@ export interface RawReadable<T> {
 	[RAW_READABLE](stream: BinaryStream, endian?: Endianness): T;
 }
 export type SerializableGenerator = Generator<RawWritable, void, undefined>;
-export type DeserializableGenerator<K extends RawReadable<any> = RawReadable<any>, T = void> = Generator<K, T, K extends RawReadable<infer S>?S:never>;
+export type DeserializableGenerator<K extends RawReadable<any> = RawReadable<any>, T = void> = Generator<
+	K,
+	T,
+	K extends RawReadable<infer S> ? S : never
+>;
 export interface Serializable {
 	[SERIALIZABLE_TYPE](): Generator<RawWritable, void, undefined>;
 }

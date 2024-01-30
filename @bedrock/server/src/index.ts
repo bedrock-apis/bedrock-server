@@ -1,2 +1,2 @@
 export * from "./protocol";
-export {BinaryStream, Endianness} from "@serenityjs/binarystream";
+export { BinaryStream, Endianness } from "@serenityjs/binarystream";
