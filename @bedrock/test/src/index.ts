@@ -1,1 +1,3 @@
-import {a} from "@bedrock/server";
+import { a } from "@bedrock/server";
+
+console.log(a);

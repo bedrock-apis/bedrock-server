@@ -6,7 +6,7 @@
     },
     "rules": {
 		"import/extensions": 0,
-		"eol-last": "error",
+		"eol-last": "warn",
 		"@typescript-eslint/semi": "error",
 		"@typescript-eslint/consistent-type-definitions": ["error", "interface"],
 		"@typescript-eslint/lines-between-class-members": "off",
@@ -29,7 +29,7 @@
         ],
         "linebreak-style": [
             "error",
-            "windows"
+            "unix"
         ],
         "quotes": [
             "error",
@@ -40,5 +40,5 @@
             "always"
         ]
     },
-    "ignorePatterns":[ "**/dist/**/*"],
+    "ignorePatterns":[ "**/dist/**/*"]
 }

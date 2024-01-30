@@ -1,5 +1,5 @@
 {
-  "name": "bedrock-test",
+  "name": "server-test",
   "version": "1.0.0",
   "main": "dist/index.js",
   "author": "conmaster2112",

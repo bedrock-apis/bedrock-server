@@ -10,7 +10,6 @@
   },
   "scripts": {
     "build": "tsc",
-		"dev": "nodemon --config nodemon.json src/index.ts",
 		"format": "prettier --write \"src/**/*.ts\"",
 		"lint": "eslint --ext .ts src"
   }, 
