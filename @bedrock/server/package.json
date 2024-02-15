@@ -18,6 +18,7 @@
   "dependencies": {
     "@serenityjs/binarystream": "^1.2.3",
     "@serenityjs/raknet-protocol": "^1.0.5",
-    "@serenityjs/raknet-server": "^1.0.8"
+    "@serenityjs/raknet-server": "^1.0.8",
+    "fast-jwt": "^3.3.3"
   }
 }

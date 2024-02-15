@@ -4,15 +4,17 @@ import { BinaryStream } from "@serenityjs/binarystream";
 import { Priority } from "@serenityjs/raknet-protocol";
 import type { Connection } from "@serenityjs/raknet-server";
 import { ClientConnectEvent, ClientDisconnectEvent } from "../Events";
+import type { DisconnectReason } from "../enums";
 import { CompressionMethod } from "../enums";
-import type { ProtocolPacket, RequestNetworkSettingsPacket } from "../protocol";
-import { PacketIds, PacketManager } from "../protocol";
+import type { ClientData, LoginPacket, ProtocolPacket, RequestNetworkSettingsPacket } from "../protocol";
+import { DisconnectPacket, PacketIds, PacketManager } from "../protocol";
 import { GAME_HEADER } from "../threading";
 import { Logger } from "../utils";
 import { Server } from "./Server";
 
 interface PacketResolverMap {
 	[PacketIds.RequestNetworkSettings]: RequestNetworkSettingsPacket;
+	[PacketIds.Login]: LoginPacket;
 }
 type PacketResolver = {
 	[k in keyof PacketResolverMap]?: (client: Client, packet: PacketResolverMap[k], packetId: number) => any;
@@ -30,17 +32,17 @@ export class Client {
 	}
 	public hasCompression = false;
 	public hasEncryption = false;
+	public clientData?: ClientData;
 	public readonly connection;
 	public readonly server;
-	public get port() {
-		return this.server.port;
-	}
+	public readonly port;
 	public readonly logger = new Logger("Client");
 	public readonly onDisconnect = new ClientDisconnectEvent();
 	public readonly onConnect = new ClientConnectEvent();
 	public constructor(connection: Connection, server: Server) {
 		this.connection = connection;
 		this.server = server;
+		this.port = server.port;
 	}
 	private async processPacket(packet: ProtocolPacket) {
 		const packetId = packet.packetId;
@@ -67,5 +69,12 @@ export class Client {
 	public post(...packets: ProtocolPacket[]) {
 		const frame = Server.BuildNetworkFrame(this.hasCompression, ...packets);
 		this.connection.sendFrame(frame, Priority.Normal);
+	}
+	public disconnect(message: string, reason: DisconnectReason, hideDisconnectScreen: boolean = false){
+		const connection = new DisconnectPacket();
+		connection.message = message;
+		connection.reason = reason;
+		connection.hideDisconnectionScreen = hideDisconnectScreen??false;
+		this.post(connection);
 	}
 }

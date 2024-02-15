@@ -16,6 +16,8 @@ export type Byte = TheType<number>;
 export type Int16 = TheType<number>;
 export type Int32 = TheType<number>;
 export type Int64 = TheType<bigint>;
+export type ZigZag = TheType<number>;
+export type ZigZong = TheType<bigint>;
 export type Float = TheType<number>;
 export type Double = TheType<number>;
 export type VarInt = TheType<number>;
@@ -35,6 +37,12 @@ export const Int32 = function (v: number, end?: number) {
 export const Int64 = function (v: bigint, end?: number) {
 	return BaseFunction(v ?? 0, (new.target ?? Int64) as any, end);
 } as unknown as SerializableConstructor<Int64, bigint>;
+export const ZigZag = function (v: number, end?: number) {
+	return BaseFunction(v ?? 0, (new.target ?? ZigZag) as any, end);
+} as unknown as SerializableConstructor<ZigZag>;
+export const ZigZong = function (v: bigint, end?: number) {
+	return BaseFunction(v ?? 0, (new.target ?? ZigZong) as any, end);
+} as unknown as SerializableConstructor<ZigZong, bigint>;
 export const Float = function (v: number, end?: number) {
 	return BaseFunction(v ?? 0, (new.target ?? Float) as any, end);
 } as unknown as SerializableConstructor<Float>;
@@ -61,13 +69,15 @@ function BaseFunction(v: any, as: SerializableConstructor<any>, end?: Endianness
 	return Object.setPrototypeOf({ __value: v }, as.prototype);
 }
 
-const numberTypes = [Byte, Int16, Int32, Int64, Float, Double, VarInt, VarString, String16, String32, Bool];
+const numberTypes = [Byte, Int16, Int32, Int64, ZigZag, ZigZong, Float, Double, VarInt, VarString, String16, String32, Bool];
 // const ctors = [Number, Number, Number, BigInt, Number, Number, Number, String, String, String, Boolean];
 const methodNames: [
 	"Uint8",
 	"Int16",
 	"Int32",
 	"Int64",
+	"ZigZag", 
+	"ZigZong",
 	"Float32",
 	"Float64",
 	"VarInt",
@@ -75,7 +85,7 @@ const methodNames: [
 	"String16",
 	"String32",
 	"Bool",
-] = ["Uint8", "Int16", "Int32", "Int64", "Float32", "Float64", "VarInt", "VarString", "String16", "String32", "Bool"];
+] = ["Uint8", "Int16", "Int32", "Int64", "ZigZag", "ZigZong", "Float32", "Float64", "VarInt", "VarString", "String16", "String32", "Bool"];
 for (const [i, v] of numberTypes.entries() as any) {
 	const r = BinaryStream.prototype[`read${methodNames[i]}`] as (e?: Endianness) => any;
 	const w = BinaryStream.prototype[`write${methodNames[i]}`] as (v: bigint | number, e?: Endianness) => void;

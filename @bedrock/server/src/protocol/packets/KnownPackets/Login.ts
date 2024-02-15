@@ -5,6 +5,6 @@ import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 
 @PacketId(PacketIds.Login)
 export class LoginPacket extends ProtocolPacket {
-	@SerializaAs(Int32, Endianness.Little) public protocol!: number;
+	@SerializaAs(Int32, Endianness.Big) public protocol!: number;
 	@SerializaAs(LoginToken, Endianness.Little) public token!: LoginToken;
 }

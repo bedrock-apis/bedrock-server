@@ -38,10 +38,7 @@ export function SerializaAs(type: RawSerializable<any>, preferedEndian?: Endiann
 }
 
 export abstract class RawSerialize extends ProtocolType {
-	public static readonly PacketId: number;
-	public readonly packetId: number;
 	protected constructor() {
 		super();
-		this.packetId = new.target.PacketId;
 	}
 }
