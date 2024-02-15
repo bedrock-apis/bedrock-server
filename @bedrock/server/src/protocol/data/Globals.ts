@@ -1,9 +1,8 @@
 import type { BinaryStream, Endianness } from "@serenityjs/binarystream";
-import type { RawReadable, RawWritable } from "./General";
-import { RAW_READABLE, RAW_WRITABLE } from "./General";
+import type { RawReadable, RawWritable } from "../types";
 
 declare global {
-	interface String extends RawWritable {}
+	interface String extends RawWritable<string> {}
 	interface StringConstructor extends RawReadable<string> {}
 }
 
@@ -19,6 +18,6 @@ const constructors: ((this: any, stream: BinaryStream, endian?: Endianness) => a
 	}, // String Readable
 ];
 for (const [i, v] of natives.entries()) {
-	v.prototype[RAW_WRITABLE] = prototypes[i];
-	v[RAW_READABLE] = constructors[i];
+	v.prototype[Symbol.RAW_WRITABLE] = prototypes[i];
+	v[Symbol.RAW_READABLE] = constructors[i];
 }

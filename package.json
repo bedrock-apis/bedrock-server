@@ -10,8 +10,8 @@
     "build": "yarn workspaces run build",
     "format": "yarn workspaces run format",
     "lint": "yarn workspaces run lint",
-    "shake":"yarn lint & yarn format & yarn build",
-    "dev":"yarn workspace server-test run dev"
+    "shake": "yarn lint & yarn format & yarn build",
+    "dev": "yarn workspace server-test run dev"
   },
   "bugs": {
     "url": "https://github.com/bedrock-apis/bedrock-server/issues"

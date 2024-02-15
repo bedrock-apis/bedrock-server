@@ -1,3 +1,2 @@
-export * from "./General";
-export * from "./Globals";
-export * from "./BaseTypes";
+export * from "./general";
+export * from "./common";

@@ -1,6 +1,7 @@
-export enum ThreadGameMessageType {
-    Response = 0
+export enum GameMessageType {
+	Response = 0,
+	StartServer = 1,
 }
-export enum ThreadHostMessageType {
-    Response = 0
+export enum HostMessageType {
+	Response = 0,
 }
