@@ -8,9 +8,6 @@
 	  "import": "./dist/index.js",
 	  "require": "./dist/index.js"
 	},
-	"files":[
-		"dist"
-	],
 	"scripts": {
 	  "build": "tsc",
 	  "format": "prettier --write \"src/**/*.ts\"",

@@ -19,23 +19,52 @@ const metadata = new WeakMap<
 
 export abstract class ProtocolSerializable extends ProtocolType {
 	protected Serialize(that: new () => ProtocolSerializable, stream: BinaryStream, value: this, endian?: Endianness) {
-		const properties = metadata.get(that) ?? [];
-		for (const { type, key, endian } of properties) type[Symbol.RAW_WRITABLE](stream, (value as any)[key], endian);
+		const properties = metadata.get(that) ?? {} as any;
+		for (const key of Object.getOwnPropertyNames(properties)) {
+			const { type, endian, asArray, arrayType } = properties[key];
+			const v = (value as any)[key];
+			if(asArray){
+				const {type:lType, endian: lEndian } = arrayType;
+				const length = v?.length??0;
+				lType[Symbol.RAW_WRITABLE](stream, length, lEndian);
+				for (let i = 0; i < length; i++) type[Symbol.RAW_WRITABLE](stream, v[i], endian); 
+			} else type[Symbol.RAW_WRITABLE](stream, v, endian);
+		}
+		
 	}
 	protected Deserialize(that: new () => ProtocolSerializable, stream: BinaryStream, endian?: Endianness) {
-		const properties = metadata.get(that) ?? [];
+		const properties = metadata.get(that) ?? {} as any;
 		const instance = new that() as any;
-		for (const { type, key, endian } of properties) {
-			instance[key] = type[Symbol.RAW_READABLE](stream, endian);
+		for (const key of Object.getOwnPropertyNames(properties)) {
+			const { type, endian, asArray, arrayType } = properties[key];
+			if(asArray){
+				const {type:lType, endian: lEndian } = arrayType;
+				const v = [] as any[];
+				const length = lType[Symbol.RAW_READABLE](stream, lEndian);
+				for (let i = 0; i < length; i++) v.push(type[Symbol.RAW_READABLE](stream, endian));
+				instance[key] = v;
+			} else instance[key] = type[Symbol.RAW_READABLE](stream, endian);
 		}
-
+		
 		return instance;
 	}
 }
+export function AsList(type: RawSerializable<number>, preferedEndian?: Endianness){
+	return (target: ProtocolSerializable, propertyKey: string) => {
+		const meta = (metadata.get((target as any).constructor) ?? {}) as any;
+		const metaInfo = meta[propertyKey]??(meta[propertyKey] = {}) as any;
+		metaInfo.asArray = true;
+		metaInfo.arrayType = {type, endian: preferedEndian};
+		metadata.set((target as any).constructor, meta as any);
+	};
+}
+
 export function SerializaAs(type: RawSerializable<any>, preferedEndian?: Endianness) {
 	return (target: ProtocolSerializable, propertyKey: string) => {
-		const meta = metadata.get((target as any).constructor) ?? ([] as any[]);
-		meta.push({ key: propertyKey, type, endian: preferedEndian });
+		const meta = (metadata.get((target as any).constructor) ?? {}) as any;
+		const metaInfo = meta[propertyKey]??(meta[propertyKey] = {}) as any;
+		metaInfo.type = type;
+		metaInfo.endian = preferedEndian;
 		metadata.set((target as any).constructor, meta as any);
 	};
 }

@@ -6,13 +6,14 @@ import type { Connection } from "@serenityjs/raknet-server";
 import { ClientConnectEvent, ClientDisconnectEvent } from "../Events";
 import type { DisconnectReason } from "../enums";
 import { CompressionMethod } from "../enums";
-import type { ClientData, LoginPacket, ProtocolPacket, RequestNetworkSettingsPacket } from "../protocol";
+import type { ClientData, LoginPacket, ProtocolPacket, RequestNetworkSettingsPacket, ResourcePackClientResponse } from "../protocol";
 import { DisconnectPacket, PacketIds, PacketManager } from "../protocol";
 import { GAME_HEADER } from "../threading";
 import { Logger } from "../utils";
 import { Server } from "./Server";
 
 interface PacketResolverMap {
+	[PacketIds.ResourcePackClientResponse]: ResourcePackClientResponse
 	[PacketIds.RequestNetworkSettings]: RequestNetworkSettingsPacket;
 	[PacketIds.Login]: LoginPacket;
 }
@@ -46,6 +47,7 @@ export class Client {
 	}
 	private async processPacket(packet: ProtocolPacket) {
 		const packetId = packet.packetId;
+		console.log("Packet: " + PacketIds[packetId]);
 		if (packetId in ClientPacketResolvers) ClientPacketResolvers[packetId](this, packet, packetId);
 		else this.logger.warn("No resolvers for " + PacketIds[packetId]);
 	}
@@ -57,7 +59,7 @@ export class Client {
 		// Compression
 		if (this.hasCompression) {
 			const compressionMethod = buffer[1];
-			if (compressionMethod !== CompressionMethod.None) buffer = inflateRawSync(buffer.slice(2));
+			buffer = (compressionMethod === CompressionMethod.None)?buffer.slice(2):inflateRawSync(buffer.slice(2));
 		} else {
 			buffer = buffer.slice(1);
 		}

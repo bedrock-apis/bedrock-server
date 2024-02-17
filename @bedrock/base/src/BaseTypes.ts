@@ -20,9 +20,10 @@ export abstract class Base<T> {
 		return String(this.__value);
 	}
 }
-export interface SerializableConstructor<T> extends RawReadable<T>, RawWritable<T> {
+export interface SerializableConstructor<T extends TheType<any>> extends RawReadable<T>, RawWritable<T> {
 	(v?: unknown): T;
 	new (v?: unknown): T;
+	readonly default: T extends TheType<infer K>?K:never;
 }
 export type TheType<T> = Base<T> & T;
 export type Byte = NBTData<NBTTag.Byte> & TheType<number>;
@@ -111,6 +112,21 @@ const numberTypes = [
 	String32,
 	Bool,
 ];
+const defualtValues = [
+	0,
+	0,
+	0,
+	0n,
+	0,
+	0n,
+	0,
+	0,
+	"",
+	"",
+	"",
+	"",
+	false,
+];
 for (const type of numberTypes) {
 	Object.setPrototypeOf(type, Base);
 	Object.setPrototypeOf(type.prototype, Base.prototype);
@@ -146,17 +162,18 @@ const methodNames: [
 	"Bool",
 ];
 for (const [i, v] of numberTypes.entries() as any) {
+	v.default = defualtValues[i];
 	const r = BinaryStream.prototype[`read${methodNames[i]}`] as (e?: Endianness) => any;
 	const w = BinaryStream.prototype[`write${methodNames[i]}`] as (v: bigint | number, e?: Endianness) => void;
 	Object.defineProperties(
 		v,
 		Object.getOwnPropertyDescriptors({
-			[Symbol.RAW_WRITABLE](thats: typeof v, stream: BinaryStream, value: any, endian?: Endianness): void {
-				w.call(stream, value.valueOf(), endian);
+			[Symbol.RAW_WRITABLE](this: typeof v, stream: BinaryStream, value: any, endian?: Endianness): void {
+				w.call(stream, value?.valueOf()??v.default, endian);
 			},
-			[Symbol.RAW_READABLE](thats: typeof v, stream: BinaryStream, endian?: Endianness) {
+			[Symbol.RAW_READABLE](this: typeof v, stream: BinaryStream, endian?: Endianness) {
 				return r.call(stream, endian);
-			},
+			}
 		}),
 	);
 }

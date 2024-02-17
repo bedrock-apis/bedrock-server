@@ -6,6 +6,7 @@ import { Frame, Priority, Reliability } from "@serenityjs/raknet-protocol";
 import type { Connection } from "@serenityjs/raknet-server";
 import { Server as Network } from "@serenityjs/raknet-server";
 import { ClientConnectEventData, ClientDisconnectEvent, ClientDisconnectEventData } from "../Events";
+import { CompressionMethod } from "../enums";
 import { PacketManager, type ProtocolPacket } from "../protocol";
 import { GAME_HEADER, HostMessageType } from "../threading";
 import type { Config } from "../threading/Types";
@@ -88,7 +89,7 @@ export class Server {
 		const encrypted = false ? deflated : deflated;
 
 		// We will then construct the final payload with the game header and the encrypted compressed payload.
-		const payload = Buffer.concat([Buffer.from([GAME_HEADER]), encrypted]);
+		const payload = Buffer.concat([Buffer.from(useCompression?[GAME_HEADER,0]:[GAME_HEADER, CompressionMethod.Zlib]), encrypted]);
 
 		// Finally we will assemble a new frame with the payload.
 		// The frame contains the reliability and priority of the packet.
