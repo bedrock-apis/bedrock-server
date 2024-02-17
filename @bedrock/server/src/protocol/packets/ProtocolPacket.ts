@@ -1,5 +1,4 @@
-import type { Constructor } from "../types";
-import { ProtocolSerializable } from "../types";
+import { ProtocolSerializable } from "@bedrock/base";
 
 export abstract class ProtocolPacket extends ProtocolSerializable {
 	public static readonly PacketId: number;

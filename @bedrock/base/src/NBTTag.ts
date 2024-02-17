@@ -1,0 +1,15 @@
+export enum NBTTag {
+	"EndOfCompoud" = 0,
+	"Byte" = 1,
+	"Int16" = 2,
+	"Int32" = 3,
+	"Int64" = 4,
+	"Float" = 5,
+	"Double" = 6,
+	"ByteArray" = 7,
+	"String" = 8,
+	"List" = 9,
+	"Compoud" = 10,
+	"Int32Array" = 0x0b,
+	"Int64Array" = 0x0c,
+}

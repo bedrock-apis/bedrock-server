@@ -70,11 +70,11 @@ export class Client {
 		const frame = Server.BuildNetworkFrame(this.hasCompression, ...packets);
 		this.connection.sendFrame(frame, Priority.Normal);
 	}
-	public disconnect(message: string, reason: DisconnectReason, hideDisconnectScreen: boolean = false){
+	public disconnect(message: string, reason: DisconnectReason, hideDisconnectScreen: boolean = false) {
 		const connection = new DisconnectPacket();
 		connection.message = message;
 		connection.reason = reason;
-		connection.hideDisconnectionScreen = hideDisconnectScreen??false;
+		connection.hideDisconnectionScreen = hideDisconnectScreen ?? false;
 		this.post(connection);
 	}
 }

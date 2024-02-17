@@ -15,7 +15,7 @@ export class ServerPort extends ThreadPort<
 	public constructor(port: MessagePort, server: Server) {
 		super(port, GameMessageType, new Logger("Server-Port"));
 		this.server = server;
-		this.RESOLVERS[GameMessageType.Debug] = n=>(Logger.DEBUG=n);
+		this.RESOLVERS[GameMessageType.Debug] = (n) => (Logger.DEBUG = n);
 		this.RESOLVERS[GameMessageType.StartServer] = (config, taskId, type) => {
 			this.ResolveTask(taskId, type, server.Start(config));
 		};

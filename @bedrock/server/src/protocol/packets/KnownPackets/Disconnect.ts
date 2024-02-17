@@ -1,6 +1,5 @@
-import { Endianness } from "@serenityjs/binarystream";
+import { SerializaAs, Bool, VarString, ZigZag } from "@bedrock/base";
 import { DisconnectReason } from "../../../enums";
-import { LoginToken, Int32, SerializaAs, Bool, VarString, ZigZag } from "../../types";
 import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 

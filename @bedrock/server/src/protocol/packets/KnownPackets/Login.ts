@@ -1,5 +1,6 @@
+import { SerializaAs, Int32 } from "@bedrock/base";
 import { Endianness } from "@serenityjs/binarystream";
-import { LoginToken, Int32, SerializaAs } from "../../types";
+import { LoginToken } from "../../types";
 import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 

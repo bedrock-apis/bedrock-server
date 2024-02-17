@@ -1,8 +1,7 @@
+import { ProtocolType, type Constructor, type RawReadable } from "@bedrock/base";
 import type { BinaryStream } from "@serenityjs/binarystream";
 import { Endianness } from "@serenityjs/binarystream";
 import fastJwt from "fast-jwt";
-import type { Constructor } from "../general";
-import { RawSerialize } from "../general";
 
 const decoder = fastJwt.createDecoder();
 export interface ClientData {
@@ -62,7 +61,7 @@ export interface LoginTokenData {
 	identityData: IdentityData;
 	publicKey: string;
 }
-export class LoginToken extends RawSerialize {
+export class LoginToken extends ProtocolType {
 	public clientData!: ClientData;
 	public identityData!: IdentityData;
 	public publicKey!: string;

@@ -1,4 +1,4 @@
-import { Int32, SerializaAs } from "../../types";
+import { Int32, SerializaAs } from "@bedrock/base";
 import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 

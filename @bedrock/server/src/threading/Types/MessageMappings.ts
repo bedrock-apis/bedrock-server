@@ -5,7 +5,7 @@ import type { Config } from "./interfaces";
 export interface GameMessageMapping {
 	[GameMessageType.StartServer]: Config;
 	[GameMessageType.Debug]: boolean;
-	[GameMessageType.KickPlayer]: {message: string;};
+	[GameMessageType.KickPlayer]: { message: string };
 	[K: number]: unknown;
 }
 export interface HostMessageMapping {
