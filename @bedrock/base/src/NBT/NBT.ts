@@ -1,5 +1,5 @@
 import type { Buffer } from "node:buffer";
-import type { Byte, Int16, Int32, Int64, Float, Double } from "./BaseTypes";
+import type { Byte, Int16, Int32, Int64, Float, Double } from "../BaseTypes";
 import { NBTTag } from "./NBTTag";
 import type { NBTValue } from "./NBTTypes";
 

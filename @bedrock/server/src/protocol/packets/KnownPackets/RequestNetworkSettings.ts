@@ -1,8 +1,8 @@
-import { Int32, SerializaAs } from "@bedrock/base";
+import { Int32, SerializeAs } from "@bedrock/base";
 import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 
 @PacketId(PacketIds.RequestNetworkSettings)
 export class RequestNetworkSettingsPacket extends ProtocolPacket {
-	@SerializaAs(Int32) public protocol!: number;
+	@SerializeAs(Int32) public protocol!: number;
 }

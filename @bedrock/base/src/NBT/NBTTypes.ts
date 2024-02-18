@@ -1,4 +1,4 @@
-import { Byte, Double, Float, Int16, Int32, Int64 } from "./BaseTypes";
+import { Byte, Double, Float, Int16, Int32, Int64 } from "../BaseTypes";
 import type { DefinitionWriter } from "./NBT";
 import { NBTTag } from "./NBTTag";
 

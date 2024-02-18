@@ -1,17 +1,16 @@
-import { Buffer } from "node:buffer";
 import { Endianness } from "@serenityjs/binarystream";
 import type { BinaryStream } from "@serenityjs/binarystream";
-import { Double, Float, Int16, Int32, Int64 } from "../BaseTypes";
+import { Double, Float, Int16, Int32, Int64 } from "../../BaseTypes";
 import { NBTTag } from "../NBTTag";
 import type { NBTValue } from "../NBTTypes";
 import { GeneralNBTDefinitionWriter, GeneralNBTDefinitionReader, NBT } from "./General";
 
-class LightNBTDefinitionWriter extends GeneralNBTDefinitionWriter {
+class BedrockNBTDefinitionWriter extends GeneralNBTDefinitionWriter {
 	public [NBTTag.Int16](value: number): void {
 		this.stream.writeInt16(value, Endianness.Little);
 	}
 	public [NBTTag.Int32](value: number): void {
-		this.stream.writeVarInt(value);
+		this.stream.writeInt32(value, Endianness.Little);
 	}
 	public [NBTTag.Float](value: number): void {
 		this.stream.writeFloat32(value, Endianness.Little);
@@ -20,38 +19,30 @@ class LightNBTDefinitionWriter extends GeneralNBTDefinitionWriter {
 		this.stream.writeFloat64(value, Endianness.Little);
 	}
 	public [NBTTag.Int64](value: bigint): void {
-		this.stream.writeVarLong(value);
-	}
-	public [NBTTag.ByteArray](value: Buffer): void {
-		this.stream.writeVarInt(value.length);
-		this.stream.writeBuffer(value);
+		this.stream.writeInt64(value, Endianness.Little);
 	}
 	public [NBTTag.String](value: string): void {
-		const buf = Buffer.from(value, "utf8");
-		this.stream.writeVarInt(buf.length);
-		this.stream.writeBuffer(buf);
+		this.stream.writeString16(value, Endianness.Little);
 	}
 	public writeCompoudKey(key: string): void {
-		const buf = Buffer.from(key, "utf8");
-		this.stream.writeVarInt(buf.length);
-		this.stream.writeBuffer(buf);
+		this[NBTTag.String](key);
 	}
 	public writeArraySize(size: number): void {
-		this.stream.writeVarInt(size * 2);
-	} // IDK why the size is doubled
+		this[NBTTag.Int32](size);
+	}
 }
-class LightNBTDefinitionReader extends GeneralNBTDefinitionReader {
+class BedrockNBTDefinitionReader extends GeneralNBTDefinitionReader {
 	public readCompoudKey(): string {
-		return this.stream.readBuffer(this.stream.readVarInt()).toString("utf8");
+		return this[NBTTag.String]();
 	}
 	public readArraySize(): number {
-		return this.stream.readVarInt() / 2;
-	} // IDK why the size is doubled
+		return Number(this[NBTTag.Int32]());
+	}
 	public [NBTTag.Int16](): Int16 {
 		return Int16(this.stream.readInt16(Endianness.Little));
 	}
 	public [NBTTag.Int32](): Int32 {
-		return Int32(this.stream.readVarInt());
+		return Int32(this.stream.readInt32(Endianness.Little));
 	}
 	public [NBTTag.Float](): Float {
 		return Float(this.stream.readFloat32(Endianness.Little));
@@ -60,34 +51,30 @@ class LightNBTDefinitionReader extends GeneralNBTDefinitionReader {
 		return Double(this.stream.readFloat64(Endianness.Little));
 	}
 	public [NBTTag.Int64](): Int64 {
-		return Int64(this.stream.readVarLong());
-	}
-	public [NBTTag.ByteArray](): Buffer {
-		return this.stream.readBuffer(this.stream.readVarInt());
+		return Int64(this.stream.readInt64(Endianness.Little));
 	}
 	public [NBTTag.String](): string {
-		return this.stream.readBuffer(this.stream.readVarInt()).toString("utf8");
+		return this.stream.readString16(Endianness.Little);
 	}
 }
-
-class LightNBT extends NBT {
+class BedrockNBT extends NBT {
 	public static ReadRootTag(stream: BinaryStream): NBTValue {
-		return new LightNBTDefinitionReader(stream).ReadRootTag();
+		return new BedrockNBTDefinitionReader(stream).ReadRootTag();
 	}
 	public static ReadTag(stream: BinaryStream): NBTValue {
-		return new LightNBTDefinitionReader(stream).ReadTag();
+		return new BedrockNBTDefinitionReader(stream).ReadTag();
 	}
 	public static Read(tag: number, stream: BinaryStream): NBTValue {
-		return new LightNBTDefinitionReader(stream).Read(tag);
+		return new BedrockNBTDefinitionReader(stream).Read(tag);
 	}
 	public static WriteRootTag(stream: BinaryStream, tag: NBTValue) {
-		new LightNBTDefinitionWriter(stream).WriteRootTag(tag);
+		new BedrockNBTDefinitionWriter(stream).WriteRootTag(tag);
 	}
 	public static WriteTag(stream: BinaryStream, tag: NBTValue) {
-		new LightNBTDefinitionWriter(stream).WriteTag(tag);
+		new BedrockNBTDefinitionWriter(stream).WriteTag(tag);
 	}
 	public static Write(stream: BinaryStream, tag: NBTValue) {
-		new LightNBTDefinitionWriter(stream).Write(tag);
+		new BedrockNBTDefinitionWriter(stream).Write(tag);
 	}
 }
-export { LightNBT, LightNBTDefinitionReader, LightNBTDefinitionWriter };
+export { BedrockNBT, BedrockNBTDefinitionReader, BedrockNBTDefinitionWriter };

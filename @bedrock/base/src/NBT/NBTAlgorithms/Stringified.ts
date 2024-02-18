@@ -1,6 +1,6 @@
 /* eslint-disable no-inner-declarations */
 import type { Buffer } from "node:buffer";
-import { Byte, Double, Float, Int16, Int32, Int64 } from "../BaseTypes";
+import { Byte, Double, Float, Int16, Int32, Int64 } from "../../BaseTypes";
 import { DefinitionReader, DefinitionWriter } from "../NBT";
 import { NBTTag } from "../NBTTag";
 import type { NBTValue } from "../NBTTypes";

@@ -22,7 +22,7 @@ export abstract class ProtocolSerializable extends ProtocolType {
 		const properties = metadata.get(that) ?? {} as any;
 		for (const key of Object.getOwnPropertyNames(properties)) {
 			const { type, endian, asArray, arrayType } = properties[key];
-			const v = (value as any)[key];
+			const v = (value as any)?.[key];
 			if(asArray){
 				const {type:lType, endian: lEndian } = arrayType;
 				const length = v?.length??0;
@@ -59,7 +59,7 @@ export function AsList(type: RawSerializable<number>, preferedEndian?: Endiannes
 	};
 }
 
-export function SerializaAs(type: RawSerializable<any>, preferedEndian?: Endianness) {
+export function SerializeAs(type: RawSerializable<any>, preferedEndian?: Endianness) {
 	return (target: ProtocolSerializable, propertyKey: string) => {
 		const meta = (metadata.get((target as any).constructor) ?? {}) as any;
 		const metaInfo = meta[propertyKey]??(meta[propertyKey] = {}) as any;
@@ -68,3 +68,12 @@ export function SerializaAs(type: RawSerializable<any>, preferedEndian?: Endiann
 		metadata.set((target as any).constructor, meta as any);
 	};
 }
+
+export function NewSerializable<T>(serialize: (stream: BinaryStream, value: T, endian?: Endianness)=>any, deserialize: (stream: BinaryStream, endian?: Endianness)=>T): RawSerializable<T>{
+	return {
+		[Symbol.RAW_WRITABLE]: serialize,
+		[Symbol.RAW_READABLE]: deserialize
+	};
+}
+
+export const UUID = NewSerializable((str,v: string)=>{str.writeUuid(v);}, (str)=>str.readUuid());

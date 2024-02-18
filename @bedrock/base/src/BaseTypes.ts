@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import { BinaryStream, type Endianness } from "@serenityjs/binarystream";
 import type { RawReadable, RawWritable } from "./BaseSerializable";
-import type { DefinitionWriter } from "./NBT";
-import { NBTTag } from "./NBTTag";
-import type { NBTData } from "./NBTTypes";
+import type { DefinitionWriter } from "./NBT/NBT";
+import { NBTTag } from "./NBT/NBTTag";
+import type { NBTData } from "./NBT/NBTTypes";
 
 /// /////////// JS is not typed language so we should create own data types, mainly for numbers
 
@@ -33,6 +33,7 @@ export type Int64 = NBTData<NBTTag.Int64> & TheType<bigint>;
 export type Float = NBTData<NBTTag.Float> & TheType<number>;
 export type Double = NBTData<NBTTag.Double> & TheType<number>;
 export type VarInt = TheType<number>;
+export type VarLong = TheType<bigint>;
 export type VarString = TheType<string>;
 export type String16 = TheType<string>;
 export type String32 = TheType<string>;
@@ -77,6 +78,10 @@ export const VarInt = function VarInt(v: number, end?: number) {
 	return BaseFunction(v ?? 0, (new.target ?? VarInt) as any, end);
 } as unknown as SerializableConstructor<VarInt>;
 
+export const VarLong = function VarLong(v: number, end?: number) {
+	return BaseFunction(v ?? 0, (new.target ?? VarLong) as any, end);
+} as unknown as SerializableConstructor<VarLong>;
+
 export const VarString = function VarString(v: number, end?: number) {
 	return BaseFunction(v ?? 0, (new.target ?? VarString) as any, end);
 } as unknown as SerializableConstructor<VarString>;
@@ -107,6 +112,7 @@ const numberTypes = [
 	Float,
 	Double,
 	VarInt,
+	VarLong,
 	VarString,
 	String16,
 	String32,
@@ -121,7 +127,8 @@ const defualtValues = [
 	0n,
 	0,
 	0,
-	"",
+	0,
+	0n,
 	"",
 	"",
 	"",
@@ -142,6 +149,7 @@ const methodNames: [
 	"Float32",
 	"Float64",
 	"VarInt",
+	"VarLong",
 	"VarString",
 	"String16",
 	"String32",
@@ -156,6 +164,7 @@ const methodNames: [
 	"Float32",
 	"Float64",
 	"VarInt",
+	"VarLong",
 	"VarString",
 	"String16",
 	"String32",
