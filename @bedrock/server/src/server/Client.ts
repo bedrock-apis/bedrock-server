@@ -3,7 +3,7 @@ import { inflateRawSync } from "node:zlib";
 import { BinaryStream } from "@serenityjs/binarystream";
 import { Priority } from "@serenityjs/raknet-protocol";
 import type { Connection } from "@serenityjs/raknet-server";
-import type { ClientData, LoginPacket, ProtocolPacket, RequestNetworkSettingsPacket, ResourcePackClientResponse } from "../protocol";
+import type { ClientData, LoginPacket, MovePlayer, ProtocolPacket, RequestNetworkSettingsPacket, ResourcePackClientResponse } from "../protocol";
 import { DisconnectPacket, PacketIds, PacketManager } from "../protocol";
 import type { DisconnectReason } from "../types";
 import { GAME_HEADER , ClientConnectEvent, ClientDisconnectEvent , CompressionMethod, Logger } from "../types";
@@ -13,6 +13,7 @@ interface PacketResolverMap {
 	[PacketIds.ResourcePackClientResponse]: ResourcePackClientResponse
 	[PacketIds.RequestNetworkSettings]: RequestNetworkSettingsPacket;
 	[PacketIds.Login]: LoginPacket;
+	[PacketIds.MovePlayer]: MovePlayer;
 }
 type PacketResolver = {
 	[k in keyof PacketResolverMap]?: (client: Client, packet: PacketResolverMap[k], packetId: number) => any;
@@ -46,7 +47,6 @@ export class Client {
 	}
 	private async processPacket(packet: ProtocolPacket) {
 		const packetId = packet.packetId;
-		console.log("Packet: " + PacketIds[packetId]);
 		if (packetId in ClientPacketResolvers) ClientPacketResolvers[packetId](this, packet, packetId);
 		else this.logger.warn("No resolvers for " + PacketIds[packetId]);
 	}

@@ -41,7 +41,7 @@ export function MessageWithPrototype(messageId: string){
 		messager.registryMessageType(target as any, messageId, (self)=>{
 			return self;
 		}, (data)=>{
-			return Object.setPrototypeOf(self, target.prototype);
+			return Object.setPrototypeOf(data, target.prototype);
 		});
 		// @ts-expect-error TS is strict
 		target[MESSAGE_TYPE] = messageId;

@@ -3,7 +3,6 @@ import { CompressionMethod, DisconnectReason } from "../../types";
 import { ClientPacketResolvers } from "../Client";
 
 ClientPacketResolvers[PacketIds.RequestNetworkSettings] = (client, packet) => {
-	console.log(packet.protocol);
 	if (packet.protocol > client.server.withConfig.protocol) return client.disconnect("Outdated server", DisconnectReason.OutdatedServer);
 	else if (packet.protocol < client.server.withConfig.protocol) return client.disconnect("Outdated client", DisconnectReason.OutdatedClient);
 	

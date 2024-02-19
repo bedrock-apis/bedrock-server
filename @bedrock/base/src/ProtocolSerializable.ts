@@ -21,7 +21,10 @@ export abstract class ProtocolSerializable extends ProtocolType {
 	protected Serialize(that: new () => ProtocolSerializable, stream: BinaryStream, value: this, endian?: Endianness) {
 		const properties = metadata.get(that) ?? {} as any;
 		for (const key of Object.getOwnPropertyNames(properties)) {
-			const { type, endian, asArray, arrayType } = properties[key];
+			const { type, endian, asArray, arrayType, conditions = [] } = properties[key];
+			let nonSkip = true;
+			for (const method of conditions) if(!(nonSkip =method(value))) break;
+			if(!nonSkip) continue;
 			const v = (value as any)?.[key];
 			if(asArray){
 				const {type:lType, endian: lEndian } = arrayType;
@@ -30,13 +33,15 @@ export abstract class ProtocolSerializable extends ProtocolType {
 				for (let i = 0; i < length; i++) type[Symbol.RAW_WRITABLE](stream, v[i], endian); 
 			} else type[Symbol.RAW_WRITABLE](stream, v, endian);
 		}
-		
 	}
 	protected Deserialize(that: new () => ProtocolSerializable, stream: BinaryStream, endian?: Endianness) {
 		const properties = metadata.get(that) ?? {} as any;
 		const instance = new that() as any;
 		for (const key of Object.getOwnPropertyNames(properties)) {
-			const { type, endian, asArray, arrayType } = properties[key];
+			const { type, endian, asArray, arrayType, conditions = [] } = properties[key];
+			let nonSkip = true;
+			for (const method of conditions) if(!(nonSkip = method(instance))) break;
+			if(!nonSkip) continue;
 			if(asArray){
 				const {type:lType, endian: lEndian } = arrayType;
 				const v = [] as any[];
@@ -55,6 +60,17 @@ export function AsList(type: RawSerializable<number>, preferedEndian?: Endiannes
 		const metaInfo = meta[propertyKey]??(meta[propertyKey] = {}) as any;
 		metaInfo.asArray = true;
 		metaInfo.arrayType = {type, endian: preferedEndian};
+		metadata.set((target as any).constructor, meta as any);
+	};
+}
+
+export function Condition<T extends ProtocolSerializable>(condition: (arg: T)=>boolean){
+	return (target: T, propertyKey: string) => {
+		const meta = (metadata.get((target as any).constructor) ?? {}) as any;
+		const metaInfo = meta[propertyKey]??(meta[propertyKey] = {}) as any;
+		// eslint-disable-next-line no-multi-assign
+		const conditions = (metaInfo.conditions = (metaInfo.condition??[]));
+		conditions.push(condition);
 		metadata.set((target as any).constructor, meta as any);
 	};
 }

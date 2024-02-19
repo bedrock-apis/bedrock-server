@@ -10,4 +10,5 @@ export enum HostMessageType {
 	Response = 0,
 	PlayerJoin = 1,
 	PlayerLeave = 2,
+	PlayerSpawn = 3,
 }

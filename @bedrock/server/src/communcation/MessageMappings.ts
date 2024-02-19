@@ -1,6 +1,6 @@
-import type { Config } from "../types";
+import type { Config, PlayerInitInfo } from "../types";
 import type { HostMessageType, GameMessageType } from "./MessageTypes";
-import type { ClientConnectData, PostMessage } from "./common";
+import type { ClientConnectData, PostMessage , ClientData } from "./common";
 
 export interface GameMessageMapping {
 	[GameMessageType.StartServer]: Config;
@@ -13,10 +13,13 @@ export interface GameMessageMapping {
 export interface HostMessageMapping {
 	[HostMessageType.PlayerJoin]: ClientConnectData;
 	[HostMessageType.PlayerLeave]: ClientConnectData;
+	[HostMessageType.PlayerSpawn]: ClientData
 	[K: number]: unknown;
 }
 export interface GameTaskMapping {
 	[GameMessageType.StartServer]: boolean;
 }
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface HostTaskMapping {}
+export interface HostTaskMapping {
+	[HostMessageType.PlayerJoin]: PlayerInitInfo
+}

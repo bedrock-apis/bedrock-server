@@ -6,6 +6,8 @@ export class Game {
 	public readonly logger = new Logger("Game");
 	protected readonly __engine = new Engine();
 	protected __isRunning = false;
+	public get onPlayerJoin(){return this.__engine.onPlayerJoin;}
+	public get onPlayerSpawn(){return this.__engine.onPlayerSpawn;}
 	protected readonly __config: Config = {
 		address: "0.0.0.0",
 		maxConnections: 0xffff,

@@ -1,3 +1,4 @@
+import { ClientData, HostMessageType } from "../../communcation";
 import { BlockCoordinates, GameInitialize, PacketIds, PlayStatus, ResourcePackStack, WorldGameRules } from "../../protocol";
 import { Difficulty, GameMode, PermissionLevel, PlayerStatus, ResourceStatus } from "../../types";
 import { ClientPacketResolvers } from "../Client";
@@ -11,7 +12,6 @@ ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, pac
 	case ResourceStatus.HaveAllPacks: {
 		const stack = new ResourcePackStack();
 		stack.gameVersion = "0.0.0.0";
-		console.log("Send stack");
 		client.post(stack);
 		break;
 	}
@@ -21,7 +21,7 @@ ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, pac
 		start.entityId = 1_289n;
 		start.runtimeEntityId = 4_640n;
 		start.playerGamemode = GameMode.Creative;
-		start.playerPosition = { x: 0, y: -46, z: 0 };
+		start.playerPosition = { x: 0, y: -60, z: 0 };
 		start.rotation = { x: 0, y: 0 };
 		start.seed = 0n;
 		start.biomeType = 0;
@@ -96,7 +96,7 @@ ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, pac
 		const status = new PlayStatus();
 		status.status = PlayerStatus.PlayerSpawn;
 		client.post(start, status);
-		console.log("Send Start packet");
+		client.port.Post(HostMessageType.PlayerSpawn, new ClientData(client.connection.guid));
 		/*
 		const start = DefualtStartGamePacket();
 		client.server.worldSettings.AssignToStartGamePacket(start);

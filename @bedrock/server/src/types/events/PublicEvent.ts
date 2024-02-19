@@ -46,7 +46,7 @@ export async function TriggerEvent<E extends any[] = []>(event: PublicEvent<E>, 
 	if (sessions.has(event)) {
 		const promises: Promise<unknown>[] = [];
 		for (const method of sessions.get(event) as any) {
-			promises.push((async () => method(params))().catch((error) => console.error(error, error.stack)));
+			promises.push((async () => method(...params))().catch((error) => console.error(error, error.stack)));
 		}
 
 		return Promise.all(promises);

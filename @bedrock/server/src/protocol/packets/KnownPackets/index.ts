@@ -6,3 +6,4 @@ export * from "./PlayStatus";
 export * from "./DataPacks";
 export * from "./GameInitialize";
 export * from "./CreativeContent";
+export * from "./MovePlayer";
