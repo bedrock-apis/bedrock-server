@@ -1,6 +1,6 @@
 import { Bool, Byte, Float, Int16, SerializeAs } from "@bedrock/base";
 import { Endianness } from "@serenityjs/binarystream";
-import { CompressionMethod } from "../../../enums";
+import { CompressionMethod } from "../../../types/enums";
 import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 

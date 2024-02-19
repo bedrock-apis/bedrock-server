@@ -5,15 +5,13 @@ import { BinaryStream } from "@serenityjs/binarystream";
 import { Frame, Priority, Reliability } from "@serenityjs/raknet-protocol";
 import type { Connection } from "@serenityjs/raknet-server";
 import { Server as Network } from "@serenityjs/raknet-server";
-import { ClientConnectEventData, ClientDisconnectEvent, ClientDisconnectEventData } from "../Events";
-import { CompressionMethod } from "../enums";
 import { PacketManager, type ProtocolPacket } from "../protocol";
-import { GAME_HEADER, HostMessageType } from "../threading";
-import type { Config } from "../threading/Types";
-import { Logger, TriggerEvent } from "../utils";
+import type { Config } from "../types";
+import { GAME_HEADER , ClientConnectEventData, ClientDisconnectEventData , CompressionMethod , Logger, TriggerEvent } from "../types";
 import { Client } from "./Client";
 import { ServerPort } from "./ServerPort";
 
+let entityRuntimeId = 0n;
 export class Server {
 	public readonly withConfig!: Config;
 	public readonly logger!: Logger;
@@ -35,9 +33,11 @@ export class Server {
 		(this as any).withConfig = config;
 		return this.network.start(config.protocol, config.version);
 	}
-	public async broadcast(...packets: ProtocolPacket[]) {
+	public broadcast(...packets: ProtocolPacket[]) {
 		const frame = Server.BuildNetworkFrame(true, ...packets);
-		for (const client of this.gameReadyClients) client.connection.sendFrame(frame, Priority.Normal);
+		let i = 0;
+		for (const client of this.gameReadyClients) if(client.isDisconnected) continue; else { client.connection.sendFrame(frame, Priority.Normal); i++;}
+		return i;
 	}
 
 	private _onConnect(c: Connection) {
@@ -100,6 +100,7 @@ export class Server {
 		frame.body = payload;
 		return frame;
 	}
+	public getNewEntityRuntimeId(){ return entityRuntimeId++;}
 }
 
 // Loger

@@ -1,6 +1,6 @@
 import { Endianness, ProtocolType } from "@bedrock/base";
 import type { BinaryStream, Constructor } from "@bedrock/base";
-import { GameRuleType } from "../../../enums";
+import { GameRuleType , GAMERULE_DEFINITION, GameRules } from "../../../types";
 
 export class GameRule extends ProtocolType { // VarInt
 	public editable!: boolean;
@@ -47,4 +47,16 @@ export class GameRule extends ProtocolType { // VarInt
 			break;
 		}
 	}
+}
+export class WorldGameRules extends GameRules{
+	public static [Symbol.RAW_WRITABLE](stream: BinaryStream, value: WorldGameRules, endian?: Endianness){
+		const allGamerules = Object.keys(GAMERULE_DEFINITION);
+		stream.writeVarInt(allGamerules.length);
+		for (const ruleId of allGamerules) {
+			GameRule.prototype.Serialize(GameRule, stream, Object.setPrototypeOf({value:value[ruleId as "showtags"]}, GAMERULE_DEFINITION[ruleId as "showtags"]) as GameRule);
+		}
+	}
+	public static [Symbol.RAW_READABLE](stream: BinaryStream, endian?: Endianness) {
+		throw new ReferenceError("No implementation");
+	};
 }

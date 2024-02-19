@@ -1,5 +1,5 @@
 import { BinaryStream } from "@serenityjs/binarystream";
-import type { Logger } from "../../utils";
+import type { Logger } from "../../types";
 import { PacketIds } from "./Packets";
 import { KNOWN_PROTOCOL_PACKETS, type ProtocolPacket } from "./ProtocolPacket";
 

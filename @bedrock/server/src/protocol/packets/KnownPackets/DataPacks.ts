@@ -1,5 +1,5 @@
 import { Bool, SerializeAs, AsList, Int16, Endianness, VarInt, VarString, Int32, Byte } from "@bedrock/base";
-import { ResourceStatus } from "../../../enums";
+import { ResourceStatus } from "../../../types/enums";
 import { BehaviorPackInfo, DataPackInfo, Experiment, PackLink, TexturePackInfo } from "../../types";
 import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";

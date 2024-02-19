@@ -1,7 +1,7 @@
 import type { MessagePort } from "node:worker_threads";
-import type { GameMessageMapping, GameTaskMapping, HostMessageMapping, HostTaskMapping } from "../threading";
-import { GameMessageType, ThreadPort } from "../threading";
-import { Logger } from "../utils";
+import type { GameMessageMapping, GameTaskMapping, HostMessageMapping, HostTaskMapping } from "../communcation";
+import { GameMessageType, ThreadPort } from "../communcation";
+import { Logger } from "../types";
 import type { Server } from "./Server";
 
 export class ServerPort extends ThreadPort<

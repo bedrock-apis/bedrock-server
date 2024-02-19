@@ -11,7 +11,8 @@
     "format": "yarn workspaces run format",
     "lint": "yarn workspaces run lint --fix",
     "shake": "yarn lint & yarn format & yarn build",
-    "dev": "yarn workspace server-test run dev"
+    "dev": "yarn workspace server-test run dev",
+    "reset": "powershell -executionpolicy bypass ./clear.ps1 & yarn build"
   },
   "bugs": {
     "url": "https://github.com/bedrock-apis/bedrock-server/issues"

@@ -3,13 +3,10 @@ import { inflateRawSync } from "node:zlib";
 import { BinaryStream } from "@serenityjs/binarystream";
 import { Priority } from "@serenityjs/raknet-protocol";
 import type { Connection } from "@serenityjs/raknet-server";
-import { ClientConnectEvent, ClientDisconnectEvent } from "../Events";
-import type { DisconnectReason } from "../enums";
-import { CompressionMethod } from "../enums";
 import type { ClientData, LoginPacket, ProtocolPacket, RequestNetworkSettingsPacket, ResourcePackClientResponse } from "../protocol";
 import { DisconnectPacket, PacketIds, PacketManager } from "../protocol";
-import { GAME_HEADER } from "../threading";
-import { Logger } from "../utils";
+import type { DisconnectReason } from "../types";
+import { GAME_HEADER , ClientConnectEvent, ClientDisconnectEvent , CompressionMethod, Logger } from "../types";
 import { Server } from "./Server";
 
 interface PacketResolverMap {
@@ -34,6 +31,7 @@ export class Client {
 	public hasCompression = false;
 	public hasEncryption = false;
 	public clientData?: ClientData;
+	public readonly isDisconnected;
 	public readonly connection;
 	public readonly server;
 	public readonly port;
@@ -44,6 +42,7 @@ export class Client {
 		this.connection = connection;
 		this.server = server;
 		this.port = server.port;
+		this.isDisconnected = false;
 	}
 	private async processPacket(packet: ProtocolPacket) {
 		const packetId = packet.packetId;
@@ -69,6 +68,7 @@ export class Client {
 		}
 	}
 	public post(...packets: ProtocolPacket[]) {
+		if(this.isDisconnected) return this.logger.warn("Trying to send packet to disconnected client");
 		const frame = Server.BuildNetworkFrame(this.hasCompression, ...packets);
 		this.connection.sendFrame(frame, Priority.Normal);
 	}
@@ -78,5 +78,6 @@ export class Client {
 		connection.reason = reason;
 		connection.hideDisconnectionScreen = hideDisconnectScreen ?? false;
 		this.post(connection);
+		(this as any).isDisconnected = true;
 	}
 }

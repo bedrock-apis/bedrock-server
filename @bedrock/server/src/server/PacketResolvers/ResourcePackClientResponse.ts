@@ -1,7 +1,5 @@
-import { Vec3 } from "@bedrock/base";
-import { CompressionMethod, Difficulty, GameMode, PermissionLevel, PlayerStatus, ResourceStatus } from "../../enums";
-import { BlockCoordinates, GameInitialize, PacketIds, PlayStatus, ResourcePackStack } from "../../protocol";
-import { NetworkSettingsPacket } from "../../protocol/packets/KnownPackets/NetworkSettings";
+import { BlockCoordinates, GameInitialize, PacketIds, PlayStatus, ResourcePackStack, WorldGameRules } from "../../protocol";
+import { Difficulty, GameMode, PermissionLevel, PlayerStatus, ResourceStatus } from "../../types";
 import { ClientPacketResolvers } from "../Client";
 
 ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, packet) => {		
@@ -20,7 +18,6 @@ ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, pac
 
 	case ResourceStatus.Completed: {
 		const start = new GameInitialize();
-		
 		start.entityId = 1_289n;
 		start.runtimeEntityId = 4_640n;
 		start.playerGamemode = GameMode.Creative;
@@ -51,7 +48,7 @@ ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, pac
 		start.platformBroadcastMode = 6;
 		start.commandsEnabled = true;
 		start.texturePacksRequired = false;
-		start.gamerules = [];
+		start.gamerules = new WorldGameRules().setGameRule("showdeathmessages", true).setGameRule("showcoordinates", true);
 		start.experiments = [];
 		start.experimentsPreviouslyToggled = false;
 		start.bonusChest = false;

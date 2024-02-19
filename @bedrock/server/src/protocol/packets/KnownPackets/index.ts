@@ -5,3 +5,4 @@ export * from "./NetworkSettings";
 export * from "./PlayStatus";
 export * from "./DataPacks";
 export * from "./GameInitialize";
+export * from "./CreativeContent";

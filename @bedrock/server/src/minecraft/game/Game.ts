@@ -1,10 +1,10 @@
-import type { Config } from "../../threading";
-import { Logger } from "../../utils";
-import { EnginePort } from "../core/engine";
+import type { Config } from "../../types";
+import { Logger } from "../../types";
+import { Engine } from "../core/engine";
 
 export class Game {
 	public readonly logger = new Logger("Game");
-	protected readonly __engine = new EnginePort();
+	protected readonly __engine = new Engine();
 	protected __isRunning = false;
 	protected readonly __config: Config = {
 		address: "0.0.0.0",

@@ -1,5 +1,5 @@
 import { SerializeAs, Bool, VarString, ZigZag } from "@bedrock/base";
-import { DisconnectReason } from "../../../enums";
+import { DisconnectReason } from "../../../types/enums";
 import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 

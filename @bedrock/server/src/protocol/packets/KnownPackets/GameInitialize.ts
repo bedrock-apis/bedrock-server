@@ -1,6 +1,6 @@
 import { AsList, Bool, Byte, Endianness, Float, Int16, Int32, Int64, LRootTag, SerializeAs, UUID, VarInt, VarLong, VarString, Vector2, Vector2f, Vector3, Vector3f, ZigZag, ZigZong } from "@bedrock/base";
-import { Difficulty, GameMode, PermissionLevel } from "../../../enums";
-import { BlockCoordinates, BlockProperty, Experiment, GameRule, ItemState } from "../../types";
+import { Difficulty, GameMode, PermissionLevel , GameRules } from "../../../types";
+import { BlockCoordinates, BlockProperty, Experiment, GameRule, ItemState, WorldGameRules } from "../../types";
 import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 
@@ -36,7 +36,7 @@ export class GameInitialize extends ProtocolPacket {
 	@SerializeAs(VarInt) public platformBroadcastMode!: number;
 	@SerializeAs(Bool) public commandsEnabled!: boolean;
 	@SerializeAs(Bool) public texturePacksRequired!: boolean;
-	@SerializeAs(GameRule) @AsList(VarInt) public gamerules!: GameRule[];
+	@SerializeAs(WorldGameRules) public gamerules!: GameRules;
 	@SerializeAs(Experiment) @AsList(Int32, Endianness.Little) public experiments!: Experiment[];
 	@SerializeAs(Bool) public experimentsPreviouslyToggled!: boolean;
 	@SerializeAs(Bool) public bonusChest!: boolean;
