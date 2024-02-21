@@ -4,6 +4,6 @@ import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 
 @PacketId(PacketIds.CreativeContent)
-export class CreativeContent extends ProtocolPacket {
+export class CreativeContentPacket extends ProtocolPacket {
     @SerializeAs(ItemEntries) public options: ItemEntries = new ItemEntries();
 }

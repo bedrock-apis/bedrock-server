@@ -3,17 +3,18 @@ import { inflateRawSync } from "node:zlib";
 import { BinaryStream } from "@serenityjs/binarystream";
 import { Priority } from "@serenityjs/raknet-protocol";
 import type { Connection } from "@serenityjs/raknet-server";
-import type { ClientData, LoginPacket, MovePlayer, ProtocolPacket, RequestNetworkSettingsPacket, ResourcePackClientResponse } from "../protocol";
+import type { ClientData, LoginPacket, MovePlayerPacket, ProtocolPacket, RequestNetworkSettingsPacket, ResourcePackClientResponsePacket, SetLocalPlayerAsInitializedPacket } from "../protocol";
 import { DisconnectPacket, PacketIds, PacketManager } from "../protocol";
-import type { DisconnectReason } from "../types";
+import type { DisconnectReason, PlayerInitInfo } from "../types";
 import { GAME_HEADER , ClientConnectEvent, ClientDisconnectEvent , CompressionMethod, Logger } from "../types";
 import { Server } from "./Server";
 
 interface PacketResolverMap {
-	[PacketIds.ResourcePackClientResponse]: ResourcePackClientResponse
+	[PacketIds.ResourcePackClientResponse]: ResourcePackClientResponsePacket
 	[PacketIds.RequestNetworkSettings]: RequestNetworkSettingsPacket;
 	[PacketIds.Login]: LoginPacket;
-	[PacketIds.MovePlayer]: MovePlayer;
+	[PacketIds.MovePlayer]: MovePlayerPacket;
+	[PacketIds.SetLocalPlayerAsInitialized]: SetLocalPlayerAsInitializedPacket
 }
 type PacketResolver = {
 	[k in keyof PacketResolverMap]?: (client: Client, packet: PacketResolverMap[k], packetId: number) => any;
@@ -22,28 +23,27 @@ type PacketResolver = {
 };
 export const ClientPacketResolvers: PacketResolver = {};
 export class Client {
-	public get isGameReady() {
-		return this.server.gameReadyClients.has(this);
-	}
-	public set isGameReady(v) {
-		if (v) this.server.gameReadyClients.add(this);
-		else this.server.gameReadyClients.delete(this);
-	}
+	public isLogged = false;
 	public hasCompression = false;
 	public hasEncryption = false;
+	public entityId: bigint = -1n;
+	public runtimeId: bigint = -1n;
 	public clientData?: ClientData;
-	public readonly isDisconnected;
+	public initData!: PlayerInitInfo;
+	public readonly xuid!: string;
+	public readonly uuid!: bigint;
+	public readonly displayName!: string;
+	public readonly isDisconnected = false;
 	public readonly connection;
 	public readonly server;
 	public readonly port;
-	public readonly logger = new Logger("Client");
+	public readonly logger = new Logger(Logger.FromRGB(156,200,250,true,"Client"));
 	public readonly onDisconnect = new ClientDisconnectEvent();
 	public readonly onConnect = new ClientConnectEvent();
 	public constructor(connection: Connection, server: Server) {
 		this.connection = connection;
 		this.server = server;
 		this.port = server.port;
-		this.isDisconnected = false;
 	}
 	private async processPacket(packet: ProtocolPacket) {
 		const packetId = packet.packetId;
@@ -67,6 +67,13 @@ export class Client {
 			this.processPacket(packet).catch(this.logger.error);
 		}
 	}
+	public get isInitialized() {
+		return this.server.loggedClients.has(this);
+	}
+	public set isInitialized(v) {
+		if (v) this.server.loggedClients.add(this);
+		else this.server.loggedClients.delete(this);
+	}
 	public post(...packets: ProtocolPacket[]) {
 		if(this.isDisconnected) return this.logger.warn("Trying to send packet to disconnected client");
 		const frame = Server.BuildNetworkFrame(this.hasCompression, ...packets);
@@ -79,5 +86,11 @@ export class Client {
 		connection.hideDisconnectionScreen = hideDisconnectScreen ?? false;
 		this.post(connection);
 		(this as any).isDisconnected = true;
+	}
+	public setPlayerAsLogged(initialValue: PlayerInitInfo){
+		this.entityId = initialValue.entityId;
+		this.runtimeId = initialValue.runtimeId;
+		this.isLogged = true;
+		this.initData = initialValue;
 	}
 }

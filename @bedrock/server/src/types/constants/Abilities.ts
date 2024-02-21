@@ -3,8 +3,8 @@ import { AbilityLayerFlag } from "../enums";
 export const DEFAULT_ABILITIES = {
 	[AbilityLayerFlag.FlySpeed]: true,
 	[AbilityLayerFlag.WalkSpeed]: true,
-	[AbilityLayerFlag.MayFly]: false,
-	[AbilityLayerFlag.Flying]: false,
+	[AbilityLayerFlag.MayFly]: true,
+	[AbilityLayerFlag.Flying]: true,
 	[AbilityLayerFlag.NoClip]: false,
 	[AbilityLayerFlag.OperatorCommands]: false,
 	[AbilityLayerFlag.Teleport]: false,

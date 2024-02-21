@@ -5,7 +5,7 @@ import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 
 @PacketId(PacketIds.GameInitialize)
-export class GameInitialize extends ProtocolPacket {
+export class GameInitializePacket extends ProtocolPacket {
 	@SerializeAs(ZigZong) public entityId!: bigint;
 	@SerializeAs(VarLong) public runtimeEntityId!: bigint;
 	@SerializeAs(ZigZag) public playerGamemode!: GameMode;

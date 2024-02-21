@@ -25,7 +25,7 @@ export const playerType = new EntityType(
 export class Player extends Entity{
 	public readonly client;
 	public headYaw = 0;
-	public gamemode = GameMode.Creative;
+	public gamemode = GameMode.Survival;
 	public constructor(client: PlayerClient){
 		super(client.engine.GetNewEntityId(), playerType);
 		this.client = client;

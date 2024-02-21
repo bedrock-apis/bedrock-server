@@ -29,10 +29,15 @@ export class Abilities {
 	protected [AbilityLayerFlag.AttackPlayers]!: boolean;
 	protected [AbilityLayerFlag.AttackMobs]!: boolean;
  	public constructor(){
-		for(const flagId of Object.keys(DEFAULT_ABILITIES)) this[flagId as "0"] = DEFAULT_ABILITIES[flagId as "0"];
+		for(const flagId of Object.keys(DEFAULT_ABILITIES)) this[flagId as "1"] = DEFAULT_ABILITIES[flagId as "1"];
 	}
 	public setAbility(flag: AbilityLayerFlag, value?: boolean){
-		this[flag as 0] = value??DEFAULT_ABILITIES[flag as 0];
+		this[flag as 1] = value??DEFAULT_ABILITIES[flag as 1];
 		return this;
+	}
+	public getFlags(){
+		let flags = 0;
+		for(const f of Object.values(AbilityLayerFlag)) if(this[f as 1]) flags |= f as number;
+		return flags;
 	}
 }

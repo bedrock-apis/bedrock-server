@@ -3,7 +3,6 @@ import { Worker } from "node:worker_threads";
 import type {  GameMessageMapping, GameTaskMapping, HostMessageMapping, HostTaskMapping } from "../../../communcation";
 import { GameMessageType, HostMessageType, ThreadPort } from "../../../communcation";
 import { Logger } from "../../../types";
-import type { PlayerClient } from "../../entities";
 import type { Engine } from "../engine";
 import { EngineResolvers } from "./resolvers";
 

@@ -5,6 +5,6 @@ import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 
 @PacketId(PacketIds.PlayStatus)
-export class PlayStatus extends ProtocolPacket {
+export class PlayStatusPacket extends ProtocolPacket {
 	@SerializeAs(Int32) public status!: PlayerStatus;
 }

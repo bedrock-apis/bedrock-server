@@ -1,6 +1,7 @@
 import fs from "node:fs";
-import { BinaryStream, Game, LightNBT, StringifiedNBT } from "@bedrock/server";
+import { BinaryStream, Game, LightNBT, Logger, StringifiedNBT } from "@bedrock/server";
 
+Logger.DEBUG = true;
 const game = new Game(649, "1.20.60");
 game.Start().then(console.log.bind(null, "Server Succesfully started:")).catch(console.error);
 game.onPlayerJoin.subscribe((data)=>{

@@ -1,9 +1,9 @@
 import { AttributeComponentIds } from "../enums";
 
-export const LF32_MAX = 3.402_823_466e+38;
+export const FL32_MAX = 3.402_823_466e+38;
 export const DEFAULT_ATTRIBUTES = {
 	[AttributeComponentIds.Absorption]:{
-		name: AttributeComponentIds.Absorption,
+		id: AttributeComponentIds.Absorption,
 		min: 0,
 		max: 16,
 		default: 0,
@@ -11,7 +11,7 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: []
 	},
 	[AttributeComponentIds.PlayerSaturation]:{
-		name: AttributeComponentIds.PlayerSaturation,
+		id: AttributeComponentIds.PlayerSaturation,
 		min: 0,
 		max: 20,
 		default: 5,
@@ -19,7 +19,7 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: [],
 	},
 	[AttributeComponentIds.PlayerExhaustion]:{
-		name: AttributeComponentIds.PlayerExhaustion,
+		id: AttributeComponentIds.PlayerExhaustion,
 		min: 0,
 		max: 20,
 		default: 0,
@@ -27,7 +27,7 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: [],
 	},
 	[AttributeComponentIds.KnockbackResistence]:{
-		name: AttributeComponentIds.KnockbackResistence,
+		id: AttributeComponentIds.KnockbackResistence,
 		min: 0,
 		max: 1,
 		default: 0,
@@ -35,23 +35,23 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: [],
 	},
 	[AttributeComponentIds.Health]:{
-		name: AttributeComponentIds.Health,
+		id: AttributeComponentIds.Health,
 		min: 0,
-		max: 20,
+		max: 40,
 		default: 20,
-		current: 20,
+		current: 13,
 		modifiers: [],
 	},
 	[AttributeComponentIds.Movement]:{
-		name: AttributeComponentIds.Movement,
+		id: AttributeComponentIds.Movement,
 		min: 0,
-		max: LF32_MAX,
+		max: FL32_MAX,
 		default: 0.1,
 		current: 0.1,
 		modifiers: [],
 	},
 	[AttributeComponentIds.FollowRange]:{
-		name: AttributeComponentIds.FollowRange,
+		id: AttributeComponentIds.FollowRange,
 		min: 0,
 		max: 2_048,
 		default: 16,
@@ -59,7 +59,7 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: [],
 	},
 	[AttributeComponentIds.PlayerHunger]:{
-		name: AttributeComponentIds.PlayerHunger,
+		id: AttributeComponentIds.PlayerHunger,
 		min: 0,
 		max: 20,
 		default: 20,
@@ -67,7 +67,7 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: [],
 	},
 	[AttributeComponentIds.AttackDamage]:{
-		name: AttributeComponentIds.AttackDamage,
+		id: AttributeComponentIds.AttackDamage,
 		min: 0,
 		max: 1,
 		default: 1,
@@ -75,7 +75,7 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: [],
 	},
 	[AttributeComponentIds.PlayerExperience]:{
-		name: AttributeComponentIds.PlayerExperience,
+		id: AttributeComponentIds.PlayerExperience,
 		min: 0,
 		max: 1,
 		default: 0,
@@ -83,7 +83,7 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: [],
 	},
 	[AttributeComponentIds.PlayerLevel]:{
-		name: AttributeComponentIds.PlayerLevel,
+		id: AttributeComponentIds.PlayerLevel,
 		min: 0,
 		max: 24_791,
 		default: 0,
@@ -91,15 +91,15 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: [],
 	},
 	[AttributeComponentIds.UnderwaterMovement]:{
-		name: AttributeComponentIds.UnderwaterMovement,
+		id: AttributeComponentIds.UnderwaterMovement,
 		min: 0,
-		max: LF32_MAX,
+		max: FL32_MAX,
 		default: 0.02,
 		current: 0.02,
 		modifiers: [],
 	},
 	[AttributeComponentIds.Luck]:{
-		name: AttributeComponentIds.Luck,
+		id: AttributeComponentIds.Luck,
 		min: -1_024,
 		max: 1_024,
 		default: 0,
@@ -107,15 +107,15 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: [],
 	},
 	[AttributeComponentIds.FallDamage]:{
-		name: AttributeComponentIds.FallDamage,
+		id: AttributeComponentIds.FallDamage,
 		min: 0,
-		max: LF32_MAX,
+		max: FL32_MAX,
 		default: 1,
 		current: 1,
 		modifiers: [],
 	},
 	[AttributeComponentIds.HorseJumpStrength]:{
-		name: AttributeComponentIds.HorseJumpStrength,
+		id: AttributeComponentIds.HorseJumpStrength,
 		min: 0,
 		max: 2,
 		default: 0.7,
@@ -123,7 +123,7 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: [],
 	},
 	[AttributeComponentIds.ZombieSpawnReinforcements]:{
-		name: AttributeComponentIds.ZombieSpawnReinforcements,
+		id: AttributeComponentIds.ZombieSpawnReinforcements,
 		min: 0,
 		max: 1,
 		default: 0,
@@ -131,9 +131,9 @@ export const DEFAULT_ATTRIBUTES = {
 		modifiers: [],
 	},
 	[AttributeComponentIds.LavaMovement]:{
-		name: AttributeComponentIds.LavaMovement,
+		id: AttributeComponentIds.LavaMovement,
 		min: 0,
-		max: LF32_MAX,
+		max: FL32_MAX,
 		default: 0.02,
 		current: 0.02,
 		modifiers: [],

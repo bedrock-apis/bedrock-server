@@ -1,8 +1,31 @@
+import { RESET_COLOR } from "../constants";
+
+export enum ConsoleColor {
+	Black = 0,
+	Red,
+	Green,
+	Yellow,
+	Blue,
+	Magenta,
+	Cyan,
+	White,
+	Default = 9,
+	Background = 10,
+	Bright = 60,
+}
+
+const LoggerInfo = {
+	Debug: fr(ConsoleColor.Magenta + ConsoleColor.Bright, "DEBUG"),
+	Info: fr(ConsoleColor.Blue + ConsoleColor.Bright, "INFO"),
+	Log: fr(ConsoleColor.White + ConsoleColor.Bright, "LOG"),
+	Warn: fr(ConsoleColor.Yellow, "WARN"),
+	Error: fr(ConsoleColor.Red + ConsoleColor.Bright, "ERROR")
+};
 export class Logger {
 	public static DEBUG: boolean = false;
 	protected roots: string[];
 	public constructor(session: string, base?: Logger) {
-		const roots = base ? [...base.roots, "[" + session + "]"] : ["[" + session + "]"];
+		const roots = base ? [...base.roots, "[" + session + RESET_COLOR + "]"] : ["[" + session + RESET_COLOR + "]"];
 		this.roots = roots;
 		this.debug = this.debug.bind(this);
 		this.info = this.info.bind(this);
@@ -15,18 +38,26 @@ export class Logger {
 		return `<${date.getUTCFullYear()}-${date.getMonth()}-${date.getUTCDate()}:${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}>`;
 	}
 	public debug(...params: any[]) {
-		if (Logger.DEBUG) console.debug(this.getTimeFormated(), ...this.roots, "[DEBUG]", ...params);
+		if (Logger.DEBUG) console.debug("\u001B[90m" + this.getTimeFormated() + RESET_COLOR, ...this.roots, `[${LoggerInfo.Debug}]`, ...params);
 	}
 	public info(...params: any[]) {
-		console.info(this.getTimeFormated(), ...this.roots, "[INFO]", ...params);
+		console.info("\u001B[90m" + this.getTimeFormated() + RESET_COLOR, ...this.roots, `[${LoggerInfo.Info}]`, ...params);
 	}
 	public log(...params: any[]) {
-		console.log(this.getTimeFormated(), ...this.roots, "[LOG]", ...params);
+		console.log("\u001B[90m" + this.getTimeFormated() + RESET_COLOR, ...this.roots, `[${LoggerInfo.Log}]`, ...params);
 	}
 	public warn(...params: any[]) {
-		console.warn(this.getTimeFormated(), ...this.roots, "[WARN]", ...params);
+		console.warn("\u001B[90m" + this.getTimeFormated() + RESET_COLOR, ...this.roots, `[${LoggerInfo.Warn}]`, ...params);
 	}
 	public error(...params: any[]) {
-		console.error(this.getTimeFormated(), ...this.roots, "[ERROR]", ...params);
+		console.error("\u001B[90m" + this.getTimeFormated() + RESET_COLOR, ...this.roots, `[${LoggerInfo.Error}]`, ...params);
+	}
+	public static FromConsoleColor(conolseColor: number, text: string){
+		return `\u001B[${conolseColor + 30}m` + (text??"");
+	}
+	public static FromRGB(r: number, g: number, b: number, foreground = true, text?: string){
+		 return `\u001B[${foreground?3:4}8;2;${r};${g};${b}m` + (text??"");
 	}
 }
+
+function fr(color: number, text: string){ return `\u001B[${color + 30}m${text}\u001B[39m`; }

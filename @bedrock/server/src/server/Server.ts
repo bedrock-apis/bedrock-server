@@ -5,21 +5,21 @@ import { BinaryStream } from "@serenityjs/binarystream";
 import { Frame, Priority, Reliability } from "@serenityjs/raknet-protocol";
 import type { Connection } from "@serenityjs/raknet-server";
 import { Server as Network } from "@serenityjs/raknet-server";
+import { GameMessageType } from "../communcation";
 import { PacketManager, type ProtocolPacket } from "../protocol";
 import type { Config } from "../types";
 import { GAME_HEADER , ClientConnectEventData, ClientDisconnectEventData , CompressionMethod , Logger, TriggerEvent } from "../types";
 import { Client } from "./Client";
 import { ServerPort } from "./ServerPort";
 
-let entityRuntimeId = 0n;
 export class Server {
 	public readonly withConfig!: Config;
-	public readonly logger!: Logger;
+	public readonly logger = new Logger(Logger.FromRGB(190,130,40,true,"Server"));
 	public readonly port;
 	public readonly network!: Network;
 	public IsNetworkRunning = false;
 	public readonly clients = new Map<bigint, Client>();
-	public readonly gameReadyClients = new Set<Client>();
+	public readonly loggedClients = new Set<Client>();
 	public constructor(port: MessagePort) {
 		this.port = new ServerPort(port, this);
 	}
@@ -31,12 +31,14 @@ export class Server {
 		this.network.on("disconnect", async (c) => this._onDisconnect(c));
 		this.network.on("encapsulated", async (c, d) => this._onDataReceive(c, d));
 		(this as any).withConfig = config;
-		return this.network.start(config.protocol, config.version);
+		const success = this.network.start(config.protocol, config.version);
+		this.logger.debug("Server is listening on", config.address, "port:", config?.port??19_132);
+		return success;
 	}
 	public broadcast(...packets: ProtocolPacket[]) {
 		const frame = Server.BuildNetworkFrame(true, ...packets);
 		let i = 0;
-		for (const client of this.gameReadyClients) if(client.isDisconnected) continue; else { client.connection.sendFrame(frame, Priority.Normal); i++;}
+		for (const client of this.loggedClients) if(client.isDisconnected) continue; else { client.connection.sendFrame(frame, Priority.Normal); i++;}
 		return i;
 	}
 
@@ -51,6 +53,7 @@ export class Server {
 		const client = this.clients.get(c.guid) as Client;
 		await TriggerEvent(client.onDisconnect, new ClientDisconnectEventData(client)).catch(client.logger.error);
 		this.clients.delete(c.guid);
+		this.loggedClients.delete(client);
 		return true;
 	}
 	private async _onDataReceive(c: Connection, data: Buffer) {
@@ -100,9 +103,5 @@ export class Server {
 		frame.body = payload;
 		return frame;
 	}
-	public getNewEntityRuntimeId(){ return entityRuntimeId++;}
 }
 
-// Loger
-// @ts-expect-error ReadOnly
-Server.prototype.logger = new Logger("Server");

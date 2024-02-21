@@ -1,6 +1,8 @@
+import { BinaryStream } from "@bedrock/base";
 import { ClientData, HostMessageType } from "../../communcation";
-import { BlockCoordinates, GameInitialize, PacketIds, PlayStatus, ResourcePackStack, WorldGameRules } from "../../protocol";
-import { Difficulty, GameMode, PermissionLevel, PlayerStatus, ResourceStatus } from "../../types";
+import { Player } from "../../minecraft";
+import { AbilityLayer, BlockCoordinates, GameInitializePacket, PacketIds, PlayStatusPacket, PlayerAttribute, ResourcePackStackPacket, UpdateAttributesPacket, UpdateEntityDataPacket, WorldGameRules } from "../../protocol";
+import { Abilities, AttributeComponentIds, CommandPermissionLevel, DEFAULT_ATTRIBUTES, Difficulty, GameMode, MetadataFlags, MetadataKey, MetadataType, PermissionLevel, PlayerStatus, ResourceStatus } from "../../types";
 import { ClientPacketResolvers } from "../Client";
 
 ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, packet) => {		
@@ -10,19 +12,19 @@ ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, pac
 	case ResourceStatus.SendPacks:
 		throw new Error("ResourceStatus.SendPacks is not implemented!");
 	case ResourceStatus.HaveAllPacks: {
-		const stack = new ResourcePackStack();
+		const stack = new ResourcePackStackPacket();
 		stack.gameVersion = "0.0.0.0";
 		client.post(stack);
 		break;
 	}
 
 	case ResourceStatus.Completed: {
-		const start = new GameInitialize();
-		start.entityId = 1_289n;
-		start.runtimeEntityId = 4_640n;
-		start.playerGamemode = GameMode.Creative;
-		start.playerPosition = { x: 0, y: -60, z: 0 };
-		start.rotation = { x: 0, y: 0 };
+		const start = new GameInitializePacket();
+		start.entityId = client.entityId;
+		start.runtimeEntityId = client.runtimeId;
+		start.playerGamemode = client.initData.gamemode;
+		start.playerPosition = client.initData.location;
+		start.rotation = client.initData.rotation;
 		start.seed = 0n;
 		start.biomeType = 0;
 		start.biomeName = "plains";
@@ -75,7 +77,7 @@ ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, pac
 		start.chatRestrictionLevel = 0;
 		start.disablePlayerInteractions = false;
 		start.levelId = "level";
-		start.worldName = "name";
+		start.worldName = "Server Name";
 		start.premiumWorldTemplateId = "00000000-0000-0000-0000-000000000000";
 		start.isTrial = false;
 		start.movementAuthority = 0;
@@ -93,10 +95,50 @@ ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, pac
 		start.clientSideGeneration = true;
 		start.blockNetworkIdsAreHashes = false; // Important
 		start.serverControlledSounds = false;
-		const status = new PlayStatus();
+		const status = new PlayStatusPacket();
 		status.status = PlayerStatus.PlayerSpawn;
 		client.post(start, status);
-		client.port.Post(HostMessageType.PlayerSpawn, new ClientData(client.connection.guid));
+		client.port.Post(HostMessageType.PlayerSpawn, new ClientData(client.uuid));
+		const attr = new UpdateAttributesPacket();
+		attr.runtimeEntityId = client.runtimeId;
+		attr.tick = 0n;
+		attr.attributes = [
+			AttributeComponentIds.Absorption,
+			AttributeComponentIds.Luck,
+			AttributeComponentIds.FallDamage,
+			AttributeComponentIds.Health,
+			AttributeComponentIds.KnockbackResistence,
+			AttributeComponentIds.Movement,
+			AttributeComponentIds.LavaMovement,
+			AttributeComponentIds.UnderwaterMovement,
+			AttributeComponentIds.AttackDamage,
+			AttributeComponentIds.PlayerExhaustion,
+			AttributeComponentIds.PlayerExperience,
+			AttributeComponentIds.PlayerHunger,
+			AttributeComponentIds.PlayerLevel,
+			AttributeComponentIds.PlayerSaturation
+		].map((e)=>{
+			const s = new PlayerAttribute();
+			Object.assign(s, DEFAULT_ATTRIBUTES[e]);
+			s.modifiers = [];
+			return s;
+		});
+		client.post(attr);
+		const a = new UpdateEntityDataPacket();
+		a.runtimeEntityId = client.runtimeId;
+		a.tick = 0n;
+		a.metadata = [
+			{
+				key: MetadataKey.Flags,
+				type: MetadataType.Long,
+				value: MetadataFlags.AffectedByGravity
+			}
+		];
+		client.post(a);
+		const s = new BinaryStream();
+		a.Serialize(UpdateEntityDataPacket, s, a);
+		console.log(s.getBuffer());
+		
 		/*
 		const start = DefualtStartGamePacket();
 		client.server.worldSettings.AssignToStartGamePacket(start);

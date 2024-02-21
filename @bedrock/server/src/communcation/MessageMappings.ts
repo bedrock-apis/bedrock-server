@@ -1,6 +1,7 @@
 import type { Config, PlayerInitInfo } from "../types";
 import type { HostMessageType, GameMessageType } from "./MessageTypes";
 import type { ClientConnectData, PostMessage , ClientData } from "./common";
+import type { PermissionClientData } from "./common/client";
 
 export interface GameMessageMapping {
 	[GameMessageType.StartServer]: Config;
@@ -8,11 +9,12 @@ export interface GameMessageMapping {
 	[GameMessageType.KickPlayer]: { message: string };
 	[GameMessageType.SendMessage]: PostMessage;
 	[GameMessageType.BroatcastMessage]: {message: string};
+	[GameMessageType.UpdatePermissions]: PermissionClientData;
 	[K: number]: unknown;
 }
 export interface HostMessageMapping {
 	[HostMessageType.PlayerJoin]: ClientConnectData;
-	[HostMessageType.PlayerLeave]: ClientConnectData;
+	[HostMessageType.PlayerLeave]: ClientData;
 	[HostMessageType.PlayerSpawn]: ClientData
 	[K: number]: unknown;
 }

@@ -1,4 +1,3 @@
-import { Vec3 } from "@bedrock/base";
 import { PacketIds } from "../../protocol";
 import { ClientPacketResolvers } from "../Client";
 

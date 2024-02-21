@@ -5,7 +5,7 @@ import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 
 @PacketId(PacketIds.MovePlayer)
-export class MovePlayer extends ProtocolPacket {
+export class MovePlayerPacket extends ProtocolPacket {
 	@SerializeAs(VarLong) public runtimeId!: bigint;
 	@SerializeAs(Vector3f) public position!: Vector3;
 	@SerializeAs(Float, Endianness.Little) public pitch!: number;

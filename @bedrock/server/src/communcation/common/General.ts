@@ -4,3 +4,6 @@ export class ClientData {
 		this.uuid = uuid;
 	}
 }
+export interface ClientData{
+	uuid: bigint;
+}

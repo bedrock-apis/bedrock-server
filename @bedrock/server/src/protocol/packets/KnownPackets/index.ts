@@ -7,3 +7,7 @@ export * from "./DataPacks";
 export * from "./GameInitialize";
 export * from "./CreativeContent";
 export * from "./MovePlayer";
+export * from "./UpdateAbilities";
+export * from "./UpdateAttributes";
+export * from "./UpdateEntityData";
+export * from "./SetLocalPlayerAsInitialized";

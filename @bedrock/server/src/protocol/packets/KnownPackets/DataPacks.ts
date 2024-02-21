@@ -5,7 +5,7 @@ import { PacketIds } from "../Packets";
 import { PacketId, ProtocolPacket } from "../ProtocolPacket";
 
 @PacketId(PacketIds.ResourcePacksInfo)
-export class ResourcePacksInfo extends ProtocolPacket {
+export class ResourcePacksInfoPacket extends ProtocolPacket {
 	@SerializeAs(Bool) public mustAccept!: boolean;
 	@SerializeAs(Bool) public hasScripts!: boolean;
 	@SerializeAs(Bool) public forceServerPacks!: boolean;
@@ -15,7 +15,7 @@ export class ResourcePacksInfo extends ProtocolPacket {
 };
 
 @PacketId(PacketIds.ResourcePackStack)
-export class ResourcePackStack extends ProtocolPacket {
+export class ResourcePackStackPacket extends ProtocolPacket {
 	@SerializeAs(Bool) public mustAccept!: boolean;
 	@SerializeAs(DataPackInfo) @AsList(VarInt) public behaviorPacks!: DataPackInfo[];
 	@SerializeAs(DataPackInfo) @AsList(VarInt) public texturePacks!: DataPackInfo[];
@@ -24,7 +24,7 @@ export class ResourcePackStack extends ProtocolPacket {
 	@SerializeAs(Bool) public experimentsPreviouslyToggled!: boolean;
 }
 @PacketId(PacketIds.ResourcePackClientResponse)
-export class ResourcePackClientResponse extends ProtocolPacket {
+export class ResourcePackClientResponsePacket extends ProtocolPacket {
 	@SerializeAs(Byte) public status!: ResourceStatus;
 	@SerializeAs(VarString) @AsList(Int16, Endianness.Little) public packIds!: string[];
 }

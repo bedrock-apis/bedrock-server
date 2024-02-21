@@ -1,5 +1,5 @@
-import { HostMessageType } from "../../../../communcation";
-import { PlayerJoinEventData, PlayerSpawnEventData, TriggerEvent } from "../../../../types";
+import { GameMessageType, HostMessageType } from "../../../../communcation";
+import { Abilities, AbilityLayerFlag, CommandPermissionLevel, PermissionLevel, PlayerJoinEventData, PlayerSpawnEventData, TriggerEvent } from "../../../../types";
 import { PlayerClient } from "../../../entities";
 import { EngineResolvers } from "../resolvers";
 
@@ -12,5 +12,11 @@ EngineResolvers[HostMessageType.PlayerJoin] = function (data, taksId){
 };
 
 EngineResolvers[HostMessageType.PlayerSpawn] = function (data){
+	this.Post(GameMessageType.UpdatePermissions, {
+		uuid: data.uuid,
+		abilities: new Abilities().getFlags() | AbilityLayerFlag.OperatorCommands,
+		commandPermission: CommandPermissionLevel.Host,
+		permission: PermissionLevel.Visitor,
+	});
 	TriggerEvent(this.engine.onPlayerSpawn, new PlayerSpawnEventData(this.engine.players.get(data.uuid) as any)).catch(this.engine.logger.error);
 };

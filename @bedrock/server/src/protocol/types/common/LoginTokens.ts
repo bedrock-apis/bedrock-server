@@ -65,7 +65,7 @@ export class LoginToken extends ProtocolType {
 	public clientData!: ClientData;
 	public identityData!: IdentityData;
 	public publicKey!: string;
-	protected Serialize(
+	public Serialize(
 		that: Constructor<this>,
 		stream: BinaryStream,
 		value: this,
@@ -77,7 +77,7 @@ export class LoginToken extends ProtocolType {
 		stream.writeString32(value.client, Endianness.Little);*/
 		throw new ReferenceError("No implementation");
 	}
-	protected Deserialize(that: Constructor<this>, stream: BinaryStream, endian?: Endianness | undefined): this {
+	public Deserialize(that: Constructor<this>, stream: BinaryStream, endian?: Endianness | undefined): this {
 		stream.readVarInt();
 		// Parse the identity chain data
 		const chains: string[] = JSON.parse(stream.readString32(Endianness.Little)).chain;

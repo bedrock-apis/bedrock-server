@@ -7,7 +7,7 @@ export class GameRule extends ProtocolType { // VarInt
 	public name!: string;
 	public type!: GameRuleType;
 	public value!: boolean | number | string;
-	protected Deserialize(that: Constructor<this>, stream: BinaryStream, endian?: Endianness | undefined): this {
+	public Deserialize(that: Constructor<this>, stream: BinaryStream, endian?: Endianness | undefined): this {
 		const thats = new that();
 		// Read all the fields for the rule.
 		thats.name = stream.readVarString();
