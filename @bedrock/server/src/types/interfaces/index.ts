@@ -1,2 +1,1 @@
-export * from "./Config";
-export * from "./PlayerInitInfo";
+export * from "./Config.js";

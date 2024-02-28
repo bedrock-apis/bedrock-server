@@ -1,17 +1,17 @@
 import { Buffer } from "node:buffer";
 import { Endianness } from "@serenityjs/binarystream";
 import type { BinaryStream } from "@serenityjs/binarystream";
-import { Double, Float, Int16, Int32, Int64 } from "../../BaseTypes";
-import { NBTTag } from "../NBTTag";
-import type { NBTValue } from "../NBTTypes";
-import { GeneralNBTDefinitionWriter, GeneralNBTDefinitionReader, NBT } from "./General";
+import { Double, Float, Int16, Int32, Int64 } from "../../BaseTypes.js";
+import { NBTTag } from "../NBTTag.js";
+import type { NBTValue } from "../NBTTypes.js";
+import { GeneralNBTDefinitionWriter, GeneralNBTDefinitionReader, NBT } from "./General.js";
 
 class LightNBTDefinitionWriter extends GeneralNBTDefinitionWriter {
 	public [NBTTag.Int16](value: number): void {
 		this.stream.writeInt16(value, Endianness.Little);
 	}
 	public [NBTTag.Int32](value: number): void {
-		this.stream.writeVarInt(value);
+		this.stream.writeVarInt(value * 2);
 	}
 	public [NBTTag.Float](value: number): void {
 		this.stream.writeFloat32(value, Endianness.Little);
@@ -51,7 +51,7 @@ class LightNBTDefinitionReader extends GeneralNBTDefinitionReader {
 		return Int16(this.stream.readInt16(Endianness.Little));
 	}
 	public [NBTTag.Int32](): Int32 {
-		return Int32(this.stream.readVarInt());
+		return Int32(this.stream.readVarInt() / 2);
 	}
 	public [NBTTag.Float](): Float {
 		return Float(this.stream.readFloat32(Endianness.Little));

@@ -1,4 +1,8 @@
-export * from "./protocol";
-export * from "./minecraft";
-export * from "./types";
-export * from "@bedrock/base";
+import "./types/index.js";
+
+
+export {Engine} from "./minecraft/engine.js";
+export {DimensionTypes, EntityTypes, VanillaDimensionTypeId} from "./minecraft/index.js";
+export {BetterFlat, TerrainFlat} from "./minecraft/generators/index.js";
+export * from "./minecraft/public.js";
+export * as protocol from "@bedrock/protocol";

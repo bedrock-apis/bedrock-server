@@ -1,6 +1,6 @@
 import type { Endianness , BinaryStream } from "@serenityjs/binarystream";
-import type { RawSerializable } from "../BaseSerializable";
-import { BedrockNBT, LightNBT, NBT } from "./NBTAlgorithms";
+import type { RawSerializable } from "../BaseSerializable.js";
+import { BedrockNBT, LightNBT, NBT } from "./NBTAlgorithms/index.js";
 
 class RootTag{
 	protected constructor(){}

@@ -1,10 +1,10 @@
 /* eslint-disable func-names */
 /* eslint-disable @typescript-eslint/no-redeclare */
 import { BinaryStream, type Endianness } from "@serenityjs/binarystream";
-import type { RawReadable, RawWritable } from "./BaseSerializable";
-import type { DefinitionWriter } from "./NBT/NBT";
-import { NBTTag } from "./NBT/NBTTag";
-import type { NBTData } from "./NBT/NBTTypes";
+import type { RawReadable, RawWritable } from "./BaseSerializable.js";
+import type { DefinitionWriter } from "./NBT/NBT.js";
+import { NBTTag } from "./NBT/NBTTag.js";
+import type { NBTData } from "./NBT/NBTTypes.js";
 
 /// /////////// JS is not typed language so we should create own data types, mainly for numbers
 
@@ -27,9 +27,13 @@ export interface SerializableConstructor<T extends TheType<any>> extends RawRead
 }
 export type TheType<T> = Base<T> & T;
 export type Byte = NBTData<NBTTag.Byte> & TheType<number>;
+export type SByte = NBTData<NBTTag.Byte> & TheType<number>;
 export type Int16 = NBTData<NBTTag.Int16> & TheType<number>;
 export type Int32 = NBTData<NBTTag.Int32> & TheType<number>;
 export type Int64 = NBTData<NBTTag.Int64> & TheType<bigint>;
+export type UInt16 = NBTData<NBTTag.Int16> & TheType<number>;
+export type UInt32 = NBTData<NBTTag.Int32> & TheType<number>;
+export type UInt64 = NBTData<NBTTag.Int64> & TheType<bigint>;
 export type Float = NBTData<NBTTag.Float> & TheType<number>;
 export type Double = NBTData<NBTTag.Double> & TheType<number>;
 export type VarInt = TheType<number>;
@@ -45,6 +49,9 @@ export type ZigZong = TheType<bigint>;
 export const Byte = function Byte(v: number, end?: number) {
 	return BaseFunction(v ?? 0, (new.target ?? Byte) as any, end);
 } as unknown as SerializableConstructor<Byte>;
+export const SByte = function SByte(v: number, end?: number) {
+	return BaseFunction(v ?? 0, (new.target ?? SByte) as any, end);
+} as unknown as SerializableConstructor<SByte>;
 
 export const Int16 = function Int16(v: number, end?: number) {
 	return BaseFunction(v ?? 0, (new.target ?? Int16) as any, end);
@@ -57,6 +64,20 @@ export const Int32 = function Int32(v: number, end?: number) {
 export const Int64 = function Int64(v: bigint, end?: number) {
 	return BaseFunction(v ?? 0, (new.target ?? Int64) as any, end);
 } as unknown as SerializableConstructor<Int64>;
+
+
+export const UInt16 = function UInt16(v: number, end?: number) {
+	return BaseFunction(v ?? 0, (new.target ?? UInt16) as any, end);
+} as unknown as SerializableConstructor<UInt16>;
+
+export const UInt32 = function UInt32(v: number, end?: number) {
+	return BaseFunction(v ?? 0, (new.target ?? UInt32) as any, end);
+} as unknown as SerializableConstructor<UInt32>;
+
+export const UInt64 = function UInt64(v: bigint, end?: number) {
+	return BaseFunction(v ?? 0, (new.target ?? UInt64) as any, end);
+} as unknown as SerializableConstructor<UInt64>;
+
 
 export const ZigZag = function ZigZag(v: number, end?: number) {
 	return BaseFunction(v ?? 0, (new.target ?? ZigZag) as any, end);
@@ -104,9 +125,13 @@ function BaseFunction(v: any, as: SerializableConstructor<any>, end?: Endianness
 
 const numberTypes = [
 	Byte,
+	SByte,
 	Int16,
 	Int32,
 	Int64,
+	UInt16,
+	UInt32,
+	UInt64,
 	ZigZag,
 	ZigZong,
 	Float,
@@ -120,6 +145,10 @@ const numberTypes = [
 ];
 const defualtValues = [
 	0,
+	0,
+	0,
+	0,
+	0n,
 	0,
 	0,
 	0n,
@@ -141,9 +170,13 @@ for (const type of numberTypes) {
 
 const methodNames: [
 	"Uint8",
+	"Int8",
 	"Int16",
 	"Int32",
 	"Int64",
+	"Uint16",
+	"Uint32",
+	"Uint64",
 	"ZigZag",
 	"ZigZong",
 	"Float32",
@@ -156,9 +189,13 @@ const methodNames: [
 	"Bool",
 ] = [
 	"Uint8",
+	"Int8",
 	"Int16",
 	"Int32",
 	"Int64",
+	"Uint16",
+	"Uint32",
+	"Uint64",
 	"ZigZag",
 	"ZigZong",
 	"Float32",
@@ -177,26 +214,29 @@ for (const [i, v] of numberTypes.entries() as any) {
 	Object.defineProperties(
 		v,
 		Object.getOwnPropertyDescriptors({
-			[Symbol.RAW_WRITABLE](this: typeof v, stream: BinaryStream, value: any, endian?: Endianness): void {
+			[Symbol.RAW_WRITABLE](this: typeof v, stream: BinaryStream, value: any, endian?: Endianness, ...params: any[]): void {
 				w.call(stream, value?.valueOf()??v.default, endian);
 			},
-			[Symbol.RAW_READABLE](this: typeof v, stream: BinaryStream, endian?: Endianness) {
+			[Symbol.RAW_READABLE](this: typeof v, stream: BinaryStream, endian?: Endianness, ...params: any[]) {
 				return r.call(stream, endian);
 			}
 		}),
 	);
 }
 
-const nbtDataTypes = [Byte, Int16, Int32, Int64, Float, Double, Bool];
-const nbtTypes = [NBTTag.Byte, NBTTag.Int16, NBTTag.Int32, NBTTag.Int64, NBTTag.Float, NBTTag.Double, NBTTag.Byte];
+const nbtDataTypes = [Byte, SByte, Int16, Int32, Int64 ,UInt16, UInt32, UInt64, Float, Double, Bool];
+const nbtTypes = [NBTTag.Byte, NBTTag.Byte,NBTTag.Int16, NBTTag.Int32, NBTTag.Int64,NBTTag.Int16, NBTTag.Int32, NBTTag.Int64, NBTTag.Float, NBTTag.Double, NBTTag.Byte];
 for (const [i, v] of nbtDataTypes.entries()) {
 	Object.defineProperties(
 		v.prototype,
 		Object.getOwnPropertyDescriptors({
 			[Symbol.NBT_TYPE]: nbtTypes[i],
-			[Symbol.NBT_WRITE](definition: DefinitionWriter, ...params) {
+			[Symbol.NBT_WRITE](definition: DefinitionWriter, ...params: any[]) {
 				(definition as any)[this[Symbol.NBT_TYPE]](this.valueOf(), ...params);
 			},
 		}),
 	);
 }
+
+export const Int8 = SByte;
+export const Uint8 = Byte;

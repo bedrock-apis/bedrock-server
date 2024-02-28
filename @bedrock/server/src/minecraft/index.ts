@@ -1,2 +1,2 @@
-export * from "./game";
-export * from "./entities";
+export * from "./entities/index.js";
+export * from "./dimensions/index.js";

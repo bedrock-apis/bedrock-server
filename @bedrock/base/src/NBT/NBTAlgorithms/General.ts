@@ -1,10 +1,10 @@
 import type { Buffer } from "node:buffer";
 import { Endianness } from "@serenityjs/binarystream";
 import type { BinaryStream } from "@serenityjs/binarystream";
-import { Byte } from "../../BaseTypes";
-import { DefinitionReader, DefinitionWriter } from "../NBT";
-import { NBTTag } from "../NBTTag";
-import type { NBTData, NBTValue } from "../NBTTypes";
+import { Byte } from "../../BaseTypes.js";
+import { DefinitionReader, DefinitionWriter } from "../NBT.js";
+import { NBTTag } from "../NBTTag.js";
+import type { NBTData, NBTValue } from "../NBTTypes.js";
 
 abstract class BinaryStreamDefinitionWriter extends DefinitionWriter {
 	public override [NBTTag.Byte](value: number) {

@@ -4,6 +4,10 @@
 	"main": "index.js",
 	"author": "conmaster2112",
 	"license": "MIT",
+	"type": "module",
+	"files":[
+		"dist"
+	],
 	"exports": {
 	  "import": "./dist/index.js",
 	  "require": "./dist/index.js"

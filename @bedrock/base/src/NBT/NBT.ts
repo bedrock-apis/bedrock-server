@@ -1,7 +1,7 @@
 import type { Buffer } from "node:buffer";
-import type { Byte, Int16, Int32, Int64, Float, Double } from "../BaseTypes";
-import { NBTTag } from "./NBTTag";
-import type { NBTValue } from "./NBTTypes";
+import type { Byte, Int16, Int32, Int64, Float, Double } from "../BaseTypes.js";
+import { NBTTag } from "./NBTTag.js";
+import type { NBTValue } from "./NBTTypes.js";
 
 export abstract class DefinitionWriter {
 	public abstract [NBTTag.Byte](value: number): void;

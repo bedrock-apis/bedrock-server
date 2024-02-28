@@ -1,7 +1,7 @@
 export interface Config {
-	address: string;
+	address?: string;
 	maxConnections?: number;
-	port: number;
+	port?: number;
 	protocol: number;
-	version: string;
+	version?: string;
 }

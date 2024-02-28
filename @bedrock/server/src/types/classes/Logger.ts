@@ -1,4 +1,4 @@
-import { RESET_COLOR } from "../constants";
+import { RESET_COLOR } from "../constants/index.js";
 
 export enum ConsoleColor {
 	Black = 0,

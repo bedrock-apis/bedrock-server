@@ -1,10 +1,10 @@
 /* eslint-disable no-inner-declarations */
 import type { Buffer } from "node:buffer";
-import { Byte, Double, Float, Int16, Int32, Int64 } from "../../BaseTypes";
-import { DefinitionReader, DefinitionWriter } from "../NBT";
-import { NBTTag } from "../NBTTag";
-import type { NBTValue } from "../NBTTypes";
-import { NBT } from "./General";
+import { Byte, Double, Float, Int16, Int32, Int64 } from "../../BaseTypes.js";
+import { DefinitionReader, DefinitionWriter } from "../NBT.js";
+import { NBTTag } from "../NBTTag.js";
+import type { NBTValue } from "../NBTTypes.js";
+import { NBT } from "./General.js";
 
 class StringifiedNBTDefinitionWriter extends DefinitionWriter {
 	public writeType(value: number): void {

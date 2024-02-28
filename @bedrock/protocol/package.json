@@ -1,0 +1,23 @@
+{
+  "name": "@bedrock/protocol",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "author": "conmaster2112",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "import": "./dist/index.js",
+    "require": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint --ext .ts src"
+  },
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "dependencies": {
+    "@bedrock/base": "1.0.0",
+    "fast-jwt": "^4.0.0"
+  }
+}

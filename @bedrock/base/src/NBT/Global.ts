@@ -1,7 +1,7 @@
 import { Buffer } from "node:buffer";
-import type { Int16 } from "../BaseTypes";
-import { NBTTag } from "./NBTTag";
-import type { NBTValue, NBTData } from "./NBTTypes";
+import type { Int16 } from "../BaseTypes.js";
+import { NBTTag } from "./NBTTag.js";
+import type { NBTValue, NBTData } from "./NBTTypes.js";
 
 declare global {
 	interface String extends NBTData<NBTTag.String> {}

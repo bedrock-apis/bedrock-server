@@ -1,31 +1,28 @@
+import { Vec3} from "@bedrock/base";
 import type { Vector2, Vector3 } from "@bedrock/base";
-import { Vec3 } from "@bedrock/base";
-import { AttributeComponent } from "../../types";
+import type { Dimension } from "../dimensions/dimension.js";
+import type { World } from "../world/world.js";
+import type { EntityBehavior } from "./EntityBehavior.js";
+import type { EntityType } from "./entity-type.js";
 
-let runtimeEntityIds = 1n;
-export class EntityType {
-	public readonly id;
-	public readonly validAttributes; 
-	public constructor(typeId: string, attributeComponents: string[]){
-		this.id = typeId;
-		this.validAttributes = attributeComponents;
-	}
-}
+let entityIds = -5_468_466_546n;
+let runtimeIds = -5_468_466_546n;
 export class Entity{
-	public nameTag = "";
-	public location: Vector3 = Vec3(0,-45,0);
-	public rotation: Vector2 = {x:0,y:0};
-	public isOnGround = false;
-	public dimension = 0;
-	public readonly id;
-	public readonly runtimeId = runtimeEntityIds++;
-	public readonly type;
-	public readonly attributes: {[K: string]: AttributeComponent;} = {};
-	public get typeId(){return this.type.id;}
-	public constructor(id: bigint, entityType: EntityType){ 
-		this.id = id; this.type = entityType; 
-		for (const attribute_name of entityType.validAttributes) {
-			this.attributes[attribute_name] = new AttributeComponent(attribute_name);
-		}
+	public get typeId(){return this.type.id;};
+	public readonly location: Vector3;
+	public readonly rotation: Vector2;
+	public readonly dimension: Dimension;
+	public readonly world: World;
+	public readonly type: EntityType;
+	public readonly behavior: EntityBehavior;
+	public readonly id: bigint = entityIds++;
+	public readonly runtimeid: bigint = runtimeIds++;
+	public constructor(type: EntityType, dimension: Dimension, behavior = type.behavior){
+		this.type = type;
+		this.dimension = dimension;
+		this.behavior = behavior.clone();
+		this.location = new Vec3();
+		this.rotation = {x:0,y:0};
+		this.world = dimension.world;
 	}
 }

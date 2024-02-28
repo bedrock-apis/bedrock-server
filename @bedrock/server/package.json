@@ -4,6 +4,7 @@
   "main": "dist/index.js",
   "author": "conmaster2112",
   "license": "MIT",
+  "type":"module",
   "exports": {
     "import": "./dist/index.js",
     "require": "./dist/index.js"
@@ -17,8 +18,8 @@
   "module": "./dist/index.js",
   "dependencies": {
     "@bedrock/base": "1.0.0",
+    "@bedrock/protocol": "1.0.0",
     "@serenityjs/raknet-protocol": "^1.0.5",
-    "@serenityjs/raknet-server": "^1.0.8",
-    "fast-jwt": "^3.3.3"
+    "@serenityjs/raknet-server": "^1.0.8"
   }
 }

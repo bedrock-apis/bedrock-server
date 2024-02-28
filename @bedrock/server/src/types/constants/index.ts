@@ -1,4 +1,2 @@
-export * from "./General";
-export * from "./Abilities";
-export * from "./Attributes";
-export * from "./GameRules";
+export * from "./General.js";
+export * from "./GamePacket.js";

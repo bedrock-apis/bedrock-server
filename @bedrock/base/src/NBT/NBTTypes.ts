@@ -1,6 +1,6 @@
-import { Byte, Double, Float, Int16, Int32, Int64 } from "../BaseTypes";
-import type { DefinitionWriter } from "./NBT";
-import { NBTTag } from "./NBTTag";
+import { Byte, Double, Float, Int16, Int32, Int64 } from "../BaseTypes.js";
+import type { DefinitionWriter } from "./NBT.js";
+import { NBTTag } from "./NBTTag.js";
 
 
 export type NBTValue = NBTData | NBTValue[] | { [k: string]: NBTValue } | { toNBT(): NBTData };
