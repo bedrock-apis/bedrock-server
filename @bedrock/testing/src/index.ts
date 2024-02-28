@@ -1,6 +1,5 @@
 import {readFileSync} from "node:fs";
-import {BedrockNBT, BinaryStream, Buffer} from "@bedrock/base"; 
-import {BetterFlat, DimensionTypes, Engine, VanillaDimensionTypeId, BlockPermutation, protocol, LoaderType} from "@bedrock/server";
+import {BetterFlat, DimensionTypes, Engine, VanillaDimensionTypeId, LoaderType} from "@bedrock/server";
 
 Engine.LoadResource(LoaderType.BlockDefinitions,readFileSync("data/canonical_block_states.nbt"));
 Engine.LoadResource(LoaderType.ItemDefinitions,readFileSync("data/start_game.bin"));

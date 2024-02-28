@@ -17,3 +17,5 @@ export * from "./ItemComponents.js";
 export * from "./Interact.js";
 export * from "./Container.js";
 export * from "./PlayerAction.js";
+export * from "./LevelChunk.js";
+export * from "./ChunkRadius.js";

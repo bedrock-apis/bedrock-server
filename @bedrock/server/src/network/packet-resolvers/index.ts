@@ -5,3 +5,4 @@ import "./PacketViolationWarning.js";
 import "./MovePlayer.js";
 import "./SetLocalPlayerAsInitialized.js";
 import "./Interact.js";
+import "./ChunkRadius.js";

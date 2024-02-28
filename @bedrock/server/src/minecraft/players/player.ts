@@ -5,10 +5,10 @@ import type { Dimension } from "../dimensions/dimension.js";
 import { Entity } from "../entities/entity.js";
 import { InternalAbilities, type Abilities } from "./abilities.js";
 import { playerType } from "./type.js";
+import { ViewManager } from "./view_manager.js";
 
 
 export abstract class Player extends Entity{
-	public abstract isValid(): boolean;
 	public abstract setGameMode(gameMode: GameMode): void;
 	public abstract readonly abilities: Abilities;
 	public readonly client;
@@ -18,14 +18,15 @@ export abstract class Player extends Entity{
 	protected constructor(dimension: Dimension, client: Client){
 		super(playerType, dimension);
 		this.client = client;
-		this.name =this.client.displayName;
+		this.nameTag = (this.name = this.client.displayName);
 	}
 }
 export class InternalPlayer extends Player{
 	public readonly engine;
 	public readonly abilities: InternalAbilities;
-	public isValid(): boolean { return this.engine.players.has(this); };
-	public updateAll(){ this.updates.add(this.abilities); }
+	public readonly viewManager = new ViewManager(this);
+	public isValid(): boolean { return super.isValid() && this.engine.players.has(this); };
+	public updateAll(){ this.updates.add(this.abilities); this.postables.add(this._metadataPacket); }
 	public updateMe(me: Postable){ if(this.isValid()) this.updates.add(me); }
 	public constructor(dimension: Dimension, client: Client){ 
 		super(dimension, client);
@@ -39,6 +40,5 @@ export class InternalPlayer extends Player{
 		(this as any).gameMode = gameMode;
 		// TODO:
 		// Update via Gamemode Change Packet
-		
 	}
 }

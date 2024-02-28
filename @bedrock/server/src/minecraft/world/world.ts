@@ -10,10 +10,12 @@ import { ItemTypes } from "../public.js";
 
 export class World {
 	public readonly engine;
+	public readonly tickDistance = 4;
 	protected readonly game_properties: GameInitializePacket;
 	protected _dimensions = new Map<string, Dimension>();
 	protected _validDimensions = new WeakSet<Dimension>();
 	protected _defualtDimension?: Dimension;
+	public readonly postables;
 	public readonly seed: bigint = 1n;
 	public getDimensions(): Dimension[]{return [...this._dimensions.values()];};
 	public getDimension(id: string): Dimension | undefined{ return this._dimensions.get(id); }
@@ -41,6 +43,7 @@ export class World {
 	public getDefualtDimension(): Dimension | undefined{ return this._defualtDimension??[...this._dimensions.values()][0]; }
 	public constructor(engine: Engine){
 		this.engine = engine;
+		this.postables = engine.postables;
 		this.game_properties = defualtGameInitializePacket;
 		this.game_properties.itemStates = [...ItemTypes.getAll()];
 	}
@@ -50,7 +53,7 @@ export class World {
 		packet.playerPosition = player.location;
 		packet.rotation = player.rotation;
 		packet.entityId = player.id;
-		packet.runtimeEntityId = player.runtimeid;
+		packet.runtimeEntityId = player.runtimeId;
 		packet.dimension = player.dimension.type.runtimeId;
 		packet.seed = this.seed;
 		packet.gamerules = [

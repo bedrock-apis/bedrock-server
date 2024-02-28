@@ -4,6 +4,7 @@ import type { ProtocolPacket } from "@bedrock/base";
 import { TickSyncPacket } from "@bedrock/protocol";
 import { Server } from "../network/index.js";
 import { BeforePlayerLogin } from "../types/events/engine.js";
+import { Logger } from "../types/index.js";
 import type { Postable } from "../types/postable.js";
 import { CanonicalBlockTypeMapper } from "./blocks/BlockTypes.js";
 import type { Entity, Mob } from "./entities/index.js";
@@ -26,6 +27,7 @@ export class Engine{
 		loaders[type](resource);
 		return (loaded[type] = true);
 	}
+	public readonly logger = new Logger(Logger.FromRGB(255,128,70,true,"ENGINE"));
 	public readonly onBeforePlayerLogin = new BeforePlayerLogin();
 	public readonly server;
 	public readonly world;
@@ -38,16 +40,19 @@ export class Engine{
 	public delta = 0;
 	public async tick(){
 		this.currentTick++;
+		for(const p of this.mobs) this._mobTick(p);
+		this.postables.add(this);
+		if(this.postables.size>1) console.warn("BROADCAST:",this.postables.size, "to players:", this.server.gamers.size);
+		this.server.broadcast(this.postables);
+		this.postables.clear();
+		for(const p of this.players) this._playerTick(p);
 		const now = performance.now();
 		this.delta = now - this.oldPerformance;
 		this.oldPerformance = now;
-		for(const p of this.mobs) this._mobTick(p);
-		this.postables.add(this);
-		this.server.broadcast(this.postables);
-		for(const p of this.players) this._playerTick(p);
-		this.postables.clear();
-		if(this.delta < 10) await delay(10);
-		else if(this.delta < 25) await delay(5);
+		await delay(1);
+		if(this.delta < 10) await delay(12);
+		else if(this.delta < 25) await delay(6);
+		else if(this.delta > 50) this.logger.warn("[TICK-FREEZING]", "Tick takes too long: " + this.delta + "ms");
 		nextTick(async ()=>this.tick());
 	}
 	public *__packets(){ for (const packet of this.postables) yield packet.toPacket(); }
@@ -62,7 +67,9 @@ export class Engine{
 		this.world = new World(this);
 		this.server = new Server(this);
 		nextTick(async ()=>this.tick());
-		setInterval(()=>console.log("Current delat: " + this.delta), 10_000);
+		setInterval(()=>{
+			console.log("Current delta: " + this.delta);
+		}, 10_000);
 	}
 	
 	protected _playerTick(player: Player){ player.client.post(player.updates); player.updates.clear(); }

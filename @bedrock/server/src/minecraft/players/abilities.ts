@@ -23,8 +23,8 @@ export abstract class Abilities implements Postable<UpdateAbilitiesPacket> {
 	public get commandPermissionLevel(){return this._source.commandPermissionLevel;}
 	public set commandPermissionLevel(v){ if(this.isValid()) this._player.updateMe(this); this._source.commandPermissionLevel = v;}
 	public get flyingSpeed(){return this._abilityLayer.flySpeed;}
-	public set flyingSpeed(v){ if(this.isValid()) this._player.updateMe(this); this._abilityLayer.walkSpeed = v;}
-	public get walkingSpeed(){return this._abilityLayer.flySpeed;}
+	public set flyingSpeed(v){ if(this.isValid()) this._player.updateMe(this); this._abilityLayer.flySpeed = v;}
+	public get walkingSpeed(){return this._abilityLayer.walkSpeed;}
 	public set walkingSpeed(v){ if(this.isValid()) this._player.updateMe(this); this._abilityLayer.walkSpeed = v;}
 	public get permissionLevel(){return this._source.permissionLevel;}
 	public set permissionLevel(v){ if(this.isValid()) this._player.updateMe(this); this._source.permissionLevel = v;}

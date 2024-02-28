@@ -9,6 +9,7 @@ export abstract class ProtocolPacket extends ProtocolSerializable {
 		super();
 		this.packetId = new.target.PacketId;
 	}
+	public toPacket(){return this;}
 }
 export const KNOWN_PROTOCOL_PACKETS: { [K: number]: typeof ProtocolPacket } = {};
 export function PacketId(packetId: number) {

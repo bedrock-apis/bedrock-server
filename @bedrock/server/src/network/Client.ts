@@ -9,7 +9,8 @@ import type {
 	PacketViolationWarningPacket,
 	InteractPacket,
 	ContainerClosePacket,
-	ContainerOpenPacket
+	ContainerOpenPacket,
+	RequestChunkRadiusPacket
 } from "@bedrock/protocol";
 import { 
 	CompressionMethod,
@@ -23,7 +24,8 @@ import { GAME_HEADER, Logger } from "../types/index.js";
 import { Server } from "./Server.js";
 
 interface PacketResolverMap {
-	[PacketIds.ResourcePackClientResponse]: ResourcePackClientResponsePacket
+	[PacketIds.ResourcePackClientResponse]: ResourcePackClientResponsePacket;
+	[PacketIds.RequestChunkRadius]: RequestChunkRadiusPacket;
 	[PacketIds.RequestNetworkSettings]: RequestNetworkSettingsPacket;
 	[PacketIds.Login]: LoginPacket;
 	[PacketIds.MovePlayer]: MovePlayerPacket;

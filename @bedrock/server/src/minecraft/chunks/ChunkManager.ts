@@ -1,17 +1,8 @@
-// import type { World } from "../World";
 import type { TerrainGenerator } from "../generators/index.js";
 import { BlockPermutation } from "../public.js";
 import { Chunk } from "./Chunk.js";
 
-export class ChunkManager{
-	/**
-	 * Chunks cache
-	 */
-	public readonly chunks;
-	/**
-	 * World instance
-	 */
-	// public readonly world;
+export class ChunkManager extends Map<bigint, Chunk>{
 	/**
 	 * Generator instance
 	 */
@@ -21,22 +12,21 @@ export class ChunkManager{
 	 */
 	public readonly airPermutation: BlockPermutation;
 	public constructor(generator: TerrainGenerator, airPermutation: BlockPermutation = BlockPermutation.resolve("air")){
-		this.chunks = new Map<bigint,Chunk>();
+		super();
 		// this.world = world;
 		this.generator = generator;
 		this.airPermutation = airPermutation;
 	}
     
 	/**
-	 * @param x Chunk x
-	 * @param y Chunk z
 	 * @returns Already generated or new chunk
 	 */
-	public getChunk(x: number, y: number): Chunk{
-		const hash = Chunk.getHash(x,y);
-		const chunk = this.chunks.get(hash)??this.generator.apply(new Chunk(x,y, this.airPermutation));
-		this.chunks.set(hash, chunk);
+	public open(hash: bigint): Chunk{
+		const chunk = this.get(hash)??this.generator.apply(new Chunk(hash, this.airPermutation));
+		this.set(hash, chunk);
 		return chunk;
 	}
-	public getFromHash(hash: bigint){ return this.chunks.get(hash);}
+	public openFromXZ(x: number, z: number){ return this.open(Chunk.getHash(x,z)); }
+	public getFromXZ(x: number, z: number){ return this.get(Chunk.getHash(x,z)); }
+	public hasFromXZ(x: number, z: number){ return this.has(Chunk.getHash(x,z)); }
 }

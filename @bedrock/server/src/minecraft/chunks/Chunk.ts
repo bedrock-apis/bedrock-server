@@ -6,15 +6,14 @@ import { SubChunk } from "./SubChunk.js";
 export class Chunk {
 	public static readonly MAX_SUB_CHUNKS = 20;
 
-	public readonly x: number;
-	public readonly z: number;
-	
+	public readonly position: {x:number,z:number};
+	public readonly hash;
 	protected readonly subchunks: SubChunk[];
 	protected readonly defaultPermutation: BlockPermutation;
 	
-	public constructor(x: number, z: number, defaultPermutation: BlockPermutation) {
-		this.x = x;
-		this.z = z;
+	public constructor(hash: bigint, defaultPermutation: BlockPermutation) {
+		this.position = Chunk.fromHash(hash);
+		this.hash = hash;
 		this.defaultPermutation = defaultPermutation;
 		this.subchunks = Array.from({ length: Chunk.MAX_SUB_CHUNKS }, () => new SubChunk(defaultPermutation));
 	}
@@ -46,9 +45,6 @@ export class Chunk {
 			z: Number(hash & 0xffffffffn),
 		};
 	}
-
-	public getHash(): bigint { return Chunk.getHash(this.x, this.z); }
-
 	protected getSubChunk(index: number): SubChunk {
 		// Check if the sub chunk exists.
 		if (!this.subchunks[index]) {
