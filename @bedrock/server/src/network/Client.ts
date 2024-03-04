@@ -10,7 +10,8 @@ import type {
 	InteractPacket,
 	ContainerClosePacket,
 	ContainerOpenPacket,
-	RequestChunkRadiusPacket
+	RequestChunkRadiusPacket,
+	PlayerActionPacket
 } from "@bedrock/protocol";
 import { 
 	CompressionMethod,
@@ -35,6 +36,7 @@ interface PacketResolverMap {
 	[PacketIds.ContainerClose]: ContainerClosePacket
 	[PacketIds.ContainerOpen]: ContainerOpenPacket
 	[PacketIds.Interact]: InteractPacket
+	[PacketIds.PlayerAction]: PlayerActionPacket
 }
 type PacketResolver = {
 	[k in keyof PacketResolverMap]?: (client: Client, packet: PacketResolverMap[k], packetId: number) => any;

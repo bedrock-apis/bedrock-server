@@ -1,0 +1,6 @@
+export {
+	EntityComponentId, AbsorptionComponent, AttackDamageComponent, FallDamageComponent,
+	FollowRangeComponent, HealthComponent, HorseJumpStrengthComponent, KnockbackResistenceComponent, LavaMovementComponent,
+	LuckComponent, MovementComponent, PlayerExhaustionComponent,PlayerExperienceComponent,PlayerHungerComponent,PlayerLevelComponent,
+	PlayerSaturationComponent, ScaleComponent,StatusPropertiesComponent,UnderwaterMovementComponent,ZombieSpawnReinforcementsComponent
+} from "./EntityComponents.js";

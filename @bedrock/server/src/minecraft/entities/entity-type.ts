@@ -3,6 +3,7 @@ import type { EntityBehavior } from "./EntityBehavior.js";
 
 export class EntityType extends Type{
 	public readonly behavior: EntityBehavior;
+	public readonly componentIds: string[] = [];
 	protected constructor(id: string, behavior: EntityBehavior){
 		super(id);
 		this.behavior = behavior;

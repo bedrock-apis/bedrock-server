@@ -17,6 +17,7 @@ export enum PacketIds {
 	MovePlayer = 0x13, // 19
 	UpdateBlock = 0x15, // 21
 	TickSync = 0x17, // 23
+	LevelEvent = 0x19, // 25
 	UpdateAttributes = 0x1d, // 29
 	InventoryTransaction = 0x1e, // 30
 	SelectedSlot = 0x1f,

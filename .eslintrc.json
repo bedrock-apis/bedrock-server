@@ -26,6 +26,7 @@
 		"@typescript-eslint/unbound-method": "off",
 		"eslint-plugin-import/no-extraneous-dependencies": "off",
 		"@typescript-eslint/member-delimiter-style": "off",
+        "no-multi-assign": "off",
         "indent": [
             "error",
             "tab"

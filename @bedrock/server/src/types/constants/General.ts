@@ -10,4 +10,5 @@ export const DEFUALT_PLAYER_ABILITY = AbilityLayerFlag.InstantBuild
 | AbilityLayerFlag.Mine
 | AbilityLayerFlag.DoorsAndSwitches
 | AbilityLayerFlag.AttackPlayers
-| AbilityLayerFlag.AttackMobs;
+| AbilityLayerFlag.AttackMobs
+| AbilityLayerFlag.OpenContainers;

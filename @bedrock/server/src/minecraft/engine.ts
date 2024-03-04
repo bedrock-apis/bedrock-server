@@ -49,10 +49,11 @@ export class Engine{
 		const now = performance.now();
 		this.delta = now - this.oldPerformance;
 		this.oldPerformance = now;
-		await delay(1);
+		await delay(1);/*
 		if(this.delta < 10) await delay(12);
 		else if(this.delta < 25) await delay(6);
-		else if(this.delta > 50) this.logger.warn("[TICK-FREEZING]", "Tick takes too long: " + this.delta + "ms");
+		else */
+		if(this.delta > 50) this.logger.warn("[TICK-FREEZING]", "Tick takes too long: " + this.delta + "ms");
 		nextTick(async ()=>this.tick());
 	}
 	public *__packets(){ for (const packet of this.postables) yield packet.toPacket(); }

@@ -54,7 +54,7 @@ export class BetterFlat extends TerrainGenerator{
 			[BlockPermutation.resolve("minecraft:dirt",{"dirt_type":"coarse"}),BlockPermutation.resolve("minecraft:dirt",{"dirt_type":"coarse"})],
 			[BlockPermutation.resolve("minecraft:dirt"),BlockPermutation.resolve("minecraft:dirt",{"dirt_type":"coarse"})],
 			[BlockPermutation.resolve("minecraft:dirt"),BlockPermutation.resolve("minecraft:dirt")],
-			[BlockPermutation.resolve("minecraft:grass"),BlockPermutation.resolve("minecraft:grass"),BlockPermutation.resolve("minecraft:moss_block"),]
+			[BlockPermutation.resolve("minecraft:grass"),BlockPermutation.resolve("minecraft:grass"),BlockPermutation.resolve("minecraft:moss_block"),BlockPermutation.resolve("minecraft:moss_block"),BlockPermutation.resolve("minecraft:moss_block"),BlockPermutation.resolve("minecraft:moss_block")]
 		]);
 	}
 }

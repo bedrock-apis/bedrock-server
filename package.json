@@ -38,5 +38,8 @@
     "prettier": "3.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "fastnoise-lite": "^1.1.0"
   }
 }
