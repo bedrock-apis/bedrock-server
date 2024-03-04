@@ -7,12 +7,15 @@
     "rules": {
 		"import/extensions": 0,
 		"eol-last": "warn",
+        "func-names": "off",
+        "no-restricted-globals": "off",
 		"@typescript-eslint/semi": "error",
 		"@typescript-eslint/consistent-type-definitions": ["error", "interface"],
 		"@typescript-eslint/lines-between-class-members": "off",
 		"promise/prefer-await-to-callbacks": "off",
 		"promise/prefer-await-to-then": "off",
 		"@typescript-eslint/no-confusing-void-expression": "off",
+        "import/no-extraneous-dependencies":"off",
 		"n/no-sync": "off",
 		"no-warning-comments": "off",
 		"no-useless-concat": "off",
@@ -23,6 +26,7 @@
 		"@typescript-eslint/unbound-method": "off",
 		"eslint-plugin-import/no-extraneous-dependencies": "off",
 		"@typescript-eslint/member-delimiter-style": "off",
+        "no-multi-assign": "off",
         "indent": [
             "error",
             "tab"

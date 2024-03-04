@@ -2,16 +2,18 @@
   "name": "bedrock-server",
   "version": "1.0.0",
   "description": "Bedrock server with protocol",
-  "main": "dist/index.js",
   "repository": "git+https://github.com/bedrock-apis/bedrock-server.git",
   "author": "conmaster2112",
-  "license": "MIT",
+  "license": "./LICENSE",
+  "type": "module",
   "scripts": {
     "build": "yarn workspaces run build",
     "format": "yarn workspaces run format",
-    "lint": "yarn workspaces run lint",
+    "lint": "yarn workspaces run lint --fix",
     "shake": "yarn lint & yarn format & yarn build",
-    "dev": "yarn workspace server-test run dev"
+    "dev": "yarn workspace @bedrock/testing run dev",
+    "reload": "yarn workspace @bedrock/testing run build & yarn workspace @bedrock/testing run dev",
+    "reset": "powershell -executionpolicy bypass ./clear.ps1 & yarn build"
   },
   "bugs": {
     "url": "https://github.com/bedrock-apis/bedrock-server/issues"
@@ -20,6 +22,12 @@
   "workspaces": [
     "@bedrock/*"
   ],
+  "packageManager": "yarn@1.22.21",
+  "engines": {
+    "node": ">=18.0.0",
+    "yarn": ">=1.0.0",
+    "npm": "please use yarn instead of npm"
+  },
   "private": true,
   "devDependencies": {
     "cross-env": "^7.0.3",
@@ -30,5 +38,8 @@
     "prettier": "3.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "fastnoise-lite": "^1.1.0"
   }
 }
