@@ -1,5 +1,5 @@
 import { PacketIds } from "@bedrock/base";
-import { EntityComponentId} from "../../minecraft/entities/EntityComponents.js";
+import { EntityComponentId } from "../../minecraft/entities/EntityComponents.js";
 import { ClientPacketResolvers } from "../Client.js";
 
 ClientPacketResolvers[PacketIds.SetLocalPlayerAsInitialized] = async (client, packet) => {

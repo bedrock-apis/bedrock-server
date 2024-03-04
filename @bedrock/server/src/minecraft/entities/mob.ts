@@ -1,5 +1,3 @@
 import { Entity } from "./entity.js";
 
-export class Mob extends Entity{
-    
-}
+export class Mob extends Entity {}

@@ -137,12 +137,24 @@ abstract class GeneralNBTDefinitionReader extends BinaryStreamDefinitionReader {
 
 class NBT {
 	protected constructor() {}
-	public static ReadRootTag(stream: BinaryStream): NBTValue { throw new ReferenceError("No implementation error"); }
-	public static ReadTag(stream: BinaryStream): NBTValue {throw new ReferenceError("No implementation error"); }
-	public static Read(tag: number, stream: BinaryStream): NBTValue { throw new ReferenceError("No implementation error"); }
-	public static WriteRootTag(stream: BinaryStream, tag: NBTValue) { throw new ReferenceError("No implementation error"); }
-	public static WriteTag(stream: BinaryStream, tag: NBTValue) { throw new ReferenceError("No implementation error"); }
-	public static Write(stream: BinaryStream, tag: NBTValue) { throw new ReferenceError("No implementation error"); }
+	public static ReadRootTag(stream: BinaryStream): NBTValue {
+		throw new ReferenceError("No implementation error");
+	}
+	public static ReadTag(stream: BinaryStream): NBTValue {
+		throw new ReferenceError("No implementation error");
+	}
+	public static Read(tag: number, stream: BinaryStream): NBTValue {
+		throw new ReferenceError("No implementation error");
+	}
+	public static WriteRootTag(stream: BinaryStream, tag: NBTValue) {
+		throw new ReferenceError("No implementation error");
+	}
+	public static WriteTag(stream: BinaryStream, tag: NBTValue) {
+		throw new ReferenceError("No implementation error");
+	}
+	public static Write(stream: BinaryStream, tag: NBTValue) {
+		throw new ReferenceError("No implementation error");
+	}
 }
 
 export {

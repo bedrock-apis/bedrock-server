@@ -8,4 +8,3 @@ export class AbilityLayer extends ProtocolSerializable {
 	@SerializeAs(Float, Endianness.Little) public flySpeed = 0.05;
 	@SerializeAs(Float, Endianness.Little) public walkSpeed = 0.1;
 }
-

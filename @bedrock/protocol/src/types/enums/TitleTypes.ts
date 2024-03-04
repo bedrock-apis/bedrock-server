@@ -9,4 +9,3 @@ export enum TitleTypes {
 	SetSubtitleJson,
 	ActionBarMessageJson,
 }
-

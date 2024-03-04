@@ -1,7 +1,7 @@
 import { Endianness, Int32, ProtocolSerializable, SerializeAs, UUID, VarString, ZigZag, ZigZong } from "@bedrock/base";
 import { Skin } from "./Skin.js";
 
-export interface Record{
+export interface Record {
 	buildPlatform?: number;
 	entityUniqueId?: bigint;
 	isHost?: boolean;
@@ -9,14 +9,16 @@ export interface Record{
 	platformChatId?: string;
 	skin?: Skin;
 	username?: string;
-	uuid: string,
+	uuid: string;
 	xuid?: string;
 }
 
-export class RemoveRecord extends ProtocolSerializable{ // VarInt Length
+export class RemoveRecord extends ProtocolSerializable {
+	// VarInt Length
 	@SerializeAs(UUID) public uuid!: string;
 }
-export class AddRecord extends ProtocolSerializable { // VarInt Length
+export class AddRecord extends ProtocolSerializable {
+	// VarInt Length
 	@SerializeAs(UUID) public uuid!: string;
 	@SerializeAs(ZigZong) public entityUniqueId?: bigint;
 	@SerializeAs(VarString) public username?: string;

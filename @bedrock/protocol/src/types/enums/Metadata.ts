@@ -63,7 +63,7 @@ export const MetadataFlags = {
 	RiderCanPick: 2_305_843_009_213_693_952n,
 	TransitionSitting: 4_611_686_018_427_387_904n,
 	Eating: 9_223_372_036_854_775_808n,
-	LayingDown: 18_446_744_073_709_551_616n
+	LayingDown: 18_446_744_073_709_551_616n,
 };
 
 export enum MetadataKey {

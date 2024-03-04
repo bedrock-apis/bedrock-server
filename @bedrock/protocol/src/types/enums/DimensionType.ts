@@ -1,5 +1,5 @@
 export enum DimensionType {
-    Overworld = 0,
-    Nether = 1,
-    End = 2
+	Overworld = 0,
+	Nether = 1,
+	End = 2,
 }

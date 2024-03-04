@@ -2,15 +2,14 @@ import type { BinaryStream, Endianness } from "@bedrock/base";
 import type { BlockPermutation } from "../public.js";
 import { SubChunk } from "./SubChunk.js";
 
-
 export class Chunk {
 	public static readonly MAX_SUB_CHUNKS = 20;
 
-	public readonly position: {x:number,z:number};
+	public readonly position: { x: number; z: number };
 	public readonly hash;
 	protected readonly subchunks: SubChunk[];
 	protected readonly defaultPermutation: BlockPermutation;
-	
+
 	public constructor(hash: bigint, defaultPermutation: BlockPermutation) {
 		this.position = Chunk.fromHash(hash);
 		this.hash = hash;
@@ -39,7 +38,7 @@ export class Chunk {
 		return ((BigInt(x) & 0xffffffffn) << 32n) | (BigInt(z) & 0xffffffffn);
 	}
 
-	public static fromHash(hash: bigint): {x:number, z:number} {
+	public static fromHash(hash: bigint): { x: number; z: number } {
 		return {
 			x: Number(hash >> 32n),
 			z: Number(hash & 0xffffffffn),
@@ -72,7 +71,7 @@ export class Chunk {
 
 		return Chunk.MAX_SUB_CHUNKS - count;
 	}
-	public static [Symbol.RAW_WRITABLE](stream: BinaryStream, value: Chunk, endian?: Endianness){
+	public static [Symbol.RAW_WRITABLE](stream: BinaryStream, value: Chunk, endian?: Endianness) {
 		// Serialize each sub chunk.
 		for (let i = 0; i < value.getSubChunkSendCount(); ++i) {
 			SubChunk[Symbol.RAW_WRITABLE](stream, value.subchunks[i], endian);

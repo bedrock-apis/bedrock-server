@@ -1,7 +1,39 @@
-import { AsList, Bool, Byte, Endianness, Float, Int16, Int32, Int64, LRootTag, SerializeAs, UUID, VarInt, VarLong, VarString, Vector2,
-	 Vector2f, Vector3, Vector3f, ZigZag, ZigZong , ProtocolPacket, PacketIds, PacketId } from "@bedrock/base";
-import type { GameRuleLike, ItemStateLike} from "../types/index.js";
-import { BlockCoordinates, BlockProperty, Difficulty, Experiment, GameMode, GameRule, ItemState, PermissionLevel } from "../types/index.js";
+import {
+	AsList,
+	Bool,
+	Byte,
+	Endianness,
+	Float,
+	Int16,
+	Int32,
+	Int64,
+	LRootTag,
+	SerializeAs,
+	UUID,
+	VarInt,
+	VarLong,
+	VarString,
+	Vector2,
+	Vector2f,
+	Vector3,
+	Vector3f,
+	ZigZag,
+	ZigZong,
+	ProtocolPacket,
+	PacketIds,
+	PacketId,
+} from "@bedrock/base";
+import type { GameRuleLike, ItemStateLike } from "../types/index.js";
+import {
+	BlockCoordinates,
+	BlockProperty,
+	Difficulty,
+	Experiment,
+	GameMode,
+	GameRule,
+	ItemState,
+	PermissionLevel,
+} from "../types/index.js";
 
 @PacketId(PacketIds.StartGame)
 export class GameInitializePacket extends ProtocolPacket {

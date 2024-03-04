@@ -1,6 +1,5 @@
 import { Endianness, ProtocolSerializable, VarString, SerializeAs, Bool, Int32 } from "@bedrock/base";
 
-
 export class BehaviorPackInfo extends ProtocolSerializable {
 	@SerializeAs(VarString) public uuid!: string;
 	@SerializeAs(VarString) public version!: string;
@@ -32,7 +31,8 @@ export class DataPackInfo extends ProtocolSerializable {
 	@SerializeAs(VarString) public version!: string;
 	@SerializeAs(VarString) public name!: string;
 }
-export class Experiment extends ProtocolSerializable { // stream.readInt32(Endianness.Little);
+export class Experiment extends ProtocolSerializable {
+	// stream.readInt32(Endianness.Little);
 	@SerializeAs(VarString) public name!: string;
 	@SerializeAs(Bool) public enabled!: boolean;
 }
