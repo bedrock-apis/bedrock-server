@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 /* eslint-disable @typescript-eslint/no-redeclare */
-import { BinaryStream, type Endianness } from "@serenityjs/binarystream";
+import { BinaryStream, Endianness } from "@serenityjs/binarystream";
 import type { RawReadable, RawWritable } from "./BaseSerializable.js";
 import type { DefinitionWriter } from "./NBT/NBT.js";
 import { NBTTag } from "./NBT/NBTTag.js";
@@ -199,10 +199,10 @@ for (const [i, v] of numberTypes.entries() as any) {
 				endian?: Endianness,
 				...params: any[]
 			): void {
-				w.call(stream, value?.valueOf() ?? v.default, endian);
+				w.call(stream, value?.valueOf() ?? v.default, endian ?? Endianness.Little);
 			},
 			[Symbol.RAW_READABLE](this: typeof v, stream: BinaryStream, endian?: Endianness, ...params: any[]) {
-				return r.call(stream, endian);
+				return r.call(stream, endian ?? Endianness.Little);
 			},
 		}),
 	);

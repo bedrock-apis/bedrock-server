@@ -27,5 +27,5 @@ import {
 
 @PacketId(PacketIds.RequestNetworkSettings)
 export class RequestNetworkSettingsPacket extends ProtocolPacket {
-	@SerializeAs(Int32) public protocol!: number;
+	@SerializeAs(Int32, Endianness.Big) public protocol!: number;
 }

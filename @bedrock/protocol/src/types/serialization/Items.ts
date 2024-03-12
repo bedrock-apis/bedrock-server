@@ -13,6 +13,10 @@ import {
 	LRootTag,
 } from "@bedrock/base";
 
+export interface ItemLegacyEntryLike{
+	entryId: number,
+	item: ItemLegacyLike
+}
 export interface ItemLegacyLike {
 	blockRuntimeId?: number;
 	canDestroy?: string[];
@@ -102,11 +106,11 @@ export class ItemLegacy extends ProtocolType {
 
 		// CanPlaceOn data
 		extras.writeInt32(value.canPlaceOn?.length ?? 0, Endianness.Little);
-		for (const string of value.canPlaceOn) extras.writeString32(string, Endianness.Little);
+		for (const string of value.canPlaceOn ?? []) extras.writeString32(string, Endianness.Little);
 
 		// CanDestroy data
 		extras.writeInt32(value.canDestroy?.length ?? 0, Endianness.Little);
-		for (const string of value.canDestroy) extras.writeString32(string, Endianness.Little);
+		for (const string of value.canDestroy ?? []) extras.writeString32(string, Endianness.Little);
 
 		// Check if item is "minecraft:	"
 		if (value.networkId === 357) {
@@ -122,20 +126,19 @@ export class ItemLegacy extends ProtocolType {
 	}
 }
 export const ItemEntries = NewSerializable(
-	(stream, value: ItemLegacyLike[]) => {
+	(stream, value: ItemLegacyEntryLike[]) => {
 		stream.writeVarInt(value?.length ?? 0);
-		let i = 1;
 		for (const v of value ?? []) {
-			stream.writeVarInt(i++); // entryId
-			ItemLegacy.prototype.Serialize(ItemLegacy, stream, v as ItemLegacy);
+			stream.writeVarInt(v.entryId); // entryId
+			ItemLegacy.prototype.Serialize(ItemLegacy, stream, v.item as ItemLegacy);
 		}
 	},
 	(str) => {
-		const arr = [] as ItemLegacy[];
+		const arr = [] as ItemLegacyEntryLike[];
 		const length = str.readVarInt();
 		for (let i = 0; i < length; i++) {
 			const entryId = str.readVarInt();
-			arr.push(ItemLegacy.prototype.Deserialize(ItemLegacy, str));
+			arr.push({entryId,item:ItemLegacy.prototype.Deserialize(ItemLegacy, str)});
 		}
 
 		return arr;

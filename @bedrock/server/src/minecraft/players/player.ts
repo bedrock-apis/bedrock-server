@@ -1,12 +1,14 @@
 import type { PlayerAttributeLike } from "@bedrock/protocol";
 import { AttributeComponentIds, GameMode, UpdateAttributesPacket } from "@bedrock/protocol";
+import { KernelConstruct, KernelPrivate } from "../../kernel/base.js";
 import type { Client } from "../../network/Client.js";
 import type { Postable } from "../../types/postable.js";
 import type { Dimension } from "../dimensions/dimension.js";
 import type { AttributeComponent } from "../entities/BaseComponents.js";
-import type { HealthComponent } from "../entities/EntityComponents.js";
+import { EntityComponentId, type HealthComponent } from "../entities/EntityComponents.js";
 import { Entity } from "../entities/entity.js";
-import { InternalAbilities, type Abilities } from "./abilities.js";
+import { ConstructAbilities, type Abilities } from "./abilities.js";
+import { ContextArea } from "./ticking.js";
 import { playerType } from "./type.js";
 import { ViewManager } from "./view_manager.js";
 
@@ -35,7 +37,7 @@ const playerComponents = [
 	AttributeComponentIds.ZombieSpawnReinforcements,
 ];
 
-export class AttributeLike implements PlayerAttributeLike {
+class AttributeLike implements PlayerAttributeLike {
 	public readonly component;
 	public get current() {
 		return this.component.currentValue;
@@ -61,38 +63,41 @@ export class AttributeLike implements PlayerAttributeLike {
 		return [id, current, def, max, min, modifiers.length].join(",");
 	}
 }
-export class PlayerAttributeUpdater extends UpdateAttributesPacket {
+class PlayerAttributeUpdater extends UpdateAttributesPacket {
 	public readonly player;
 	public readonly changeAttributes = new Set<AttributeLike>();
-	public constructor(player: InternalPlayer) {
+	public constructor(player: Player) {
 		super();
 		this.player = player;
 	}
 	public Update(att: AttributeLike) {
 		this.changeAttributes.add(att);
-		this.player.updates.add(this);
+		this.player._onUpdate(this);
 	}
 	public toPacket(): this {
 		this.runtimeEntityId = this.player.runtimeId;
-		console.log(this.changeAttributes.size);
 		this.attributes = [...this.changeAttributes];
 		this.changeAttributes.clear();
 		return this;
 	}
 }
 
-export abstract class Player extends Entity {
+export class Player extends Entity {
+	public readonly engine;
 	protected readonly _attributes = new PlayerAttributeUpdater(this as any);
-	public abstract setGameMode(gameMode: GameMode): void;
-	public abstract readonly abilities: Abilities;
+	public readonly abilities: Abilities = ConstructAbilities(this);
 	public readonly client;
 	public readonly name;
-	public readonly gameMode = GameMode.Survival;
-	public readonly updates = new Set<Postable>();
+	public viewDistance: number = 0;
+	public readonly gameMode = GameMode.Creative;
+	public readonly context;
+	public readonly viewManager;
 	protected constructor(dimension: Dimension, client: Client) {
+		KernelPrivate(new.target);
 		super(playerType, dimension);
 		this.client = client;
 		this.name = client.displayName;
+		this.engine = this.dimension.world.engine;
 		for (const componentId of playerComponents) {
 			const component = this.getComponent(componentId);
 			if (component) {
@@ -102,31 +107,62 @@ export abstract class Player extends Entity {
 				});
 			}
 		}
+
+		this.context = new ContextArea(this);
+		this.viewManager = new ViewManager(this);
 	}
-}
-export class InternalPlayer extends Player {
-	public readonly engine;
-	public readonly abilities: InternalAbilities;
-	public readonly viewManager = new ViewManager(this);
 	public isValid(): boolean {
 		return super.isValid() && this.engine.players.has(this);
 	}
-	public updateAll() {
-		this.updates.add(this.abilities);
-		this.updates.add(this._attributes);
-		this.postables.add(this._metadataPacket);
+	public _updateAll() {
+		this._onUpdate(this.abilities);
+		this._onUpdate(this._attributes);
+		super._updateAll();
 	}
-	public updateMe(me: Postable) {
-		if (this.isValid()) this.updates.add(me);
+	public _updateFor(me: Postable) {
+		this._onUpdate(me);
 	}
-	public constructor(dimension: Dimension, client: Client) {
-		super(dimension, client);
-		this.abilities = new InternalAbilities(this);
-		this.engine = this.world.engine;
+	/**
+	 * Runs every tick
+	 * Updates viewManager
+	 * Updates context area
+	 * calls entity tick
+	 */
+	public _onTick() {
+		this.viewManager._onTick();
+		this.context._onTick();
+		super._onTick();
 	}
-	public setGameMode(gameMode: GameMode) {
-		(this as any).gameMode = gameMode;
-		// TODO:
-		// Update via Gamemode Change Packet
+	/**
+	 * Runs before player sprinting state changes
+	 *
+	 * @param startSprinting New sprinting value
+	 * @returns Return inverted value to cancel sprinting
+	 */
+	public _onBeforeIsSprintingChange(startSprinting: boolean){ return startSprinting; }
+	/**
+	 * Runs when player sprinting state changes
+	 * Updates player movement speed
+	 * Updates isSprinting status to new value
+	 * 
+	 * Calls _getDefaultMovemnt and _getSprintingMovement
+	 *
+	 * @param isSprinting is player currently sprinting
+	 */
+	public _onIsSprintingChange(isSprinting: boolean){ 
+		const status = this.getComponent(EntityComponentId.StatusProperties)!;
+		status.isSprinting = isSprinting;
+		const speed = this.getComponent(EntityComponentId.Movement)!;
+		speed.currentValue = isSprinting?this._getDefaultMovement() + this._getSprintingMovement():this._getDefaultMovement();
 	}
+	/**
+	 * Runs when player sends a text message
+	 *
+	 * @param options Packet with test informations, you should return this object if you dont want to cancel this message
+	 * @returns return nothing if you want to cancel this message, or return recieved object.
+	 */
+	public _onTextReceived<T extends {message: string, sourceName: string}>(options: T): T | undefined{ return options; }
+}
+export function ConstructPlayer(dimension: Dimension, client: Client): Player {
+	return KernelConstruct(Player as any, dimension, client);
 }

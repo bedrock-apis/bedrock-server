@@ -2,7 +2,7 @@ import type { GameInitializePacket } from "@bedrock/protocol";
 import { defualtGameInitializePacket } from "../../types/constants/GamePacket.js";
 import type { DimensionType } from "../dimensions/dimension-type.js";
 import type { Dimension } from "../dimensions/dimension.js";
-import { InternalDimension } from "../dimensions/dimension.js";
+import { ConstructDimension } from "../dimensions/dimension.js";
 import type { Engine } from "../engine.js";
 import type { TerrainGenerator } from "../generators/Generator.js";
 import type { Player } from "../players/player.js";
@@ -24,7 +24,7 @@ export class World {
 		return this._dimensions.get(id);
 	}
 	public createDimension(id: string, dimensionType: DimensionType, generator: TerrainGenerator) {
-		const dimesnion = new InternalDimension(this, id, dimensionType, generator);
+		const dimesnion = ConstructDimension(this, id, dimensionType, generator);
 		this._validDimensions.add(dimesnion);
 		this._dimensions.set(id, dimesnion);
 		return dimesnion as Dimension;

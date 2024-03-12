@@ -95,12 +95,16 @@ class PerlinNoise {
 		return (1 - amt) * start + amt * end;
 	}
 }
-
 export class PerlinGenerator extends TerrainGenerator {
 	public readonly air = BlockPermutation.resolve("air");
 	public readonly stone = BlockPermutation.resolve("stone");
 	public readonly moss = BlockPermutation.resolve("moss_block");
+	public readonly grass = BlockPermutation.resolve("grass");
+	public readonly dirt = BlockPermutation.resolve("dirt");
+	public readonly path = BlockPermutation.resolve("grass_path");
 	public readonly water = BlockPermutation.resolve("water");
+	public readonly torch = BlockPermutation.resolve("torch");
+	public readonly pallete = [this.moss, this.grass, this.grass, this.grass, this.grass, this.dirt, this.dirt];
 	public readonly noise;
 	public readonly noise2;
 	public readonly noise3;
@@ -138,18 +142,23 @@ export class PerlinGenerator extends TerrainGenerator {
 		const p4 = this.noise4;
 		const f = 1 / this.frequency;
 		const i = this.inh;
+		const length = this.pallete.length;
+		const plt = this.pallete;
 		// Generate the chunk.
 		for (let x = 0; x < 16; x++) {
 			for (let z = 0; z < 16; z++) {
 				const S1 = (x + XS) * f;
 				const S2 = (z + ZS) * f;
 				let Y = p.GetNoise(S1 / 10, S2 / 10) * i;
-				Y += (p2.GetNoise(S1, S2) * i) / 2;
+				let s = p2.GetNoise(S1, S2);
+				if (s < 0) s = 0;
+				Y += (s * i) / 2;
 				Y += (p3.GetNoise(S1 * 3, S2 * 3) * i) / 10;
 				// for (let y = 0; y > Y ; y--) chunk.setBlock(x, y, z, this.water);
 				Y *= (p4.GetNoise(S1 / 30, S2 / 30) + 1) * 0.6;
 				Y += 100;
-				chunk.setBlock(x, Y, z, this.moss);
+				chunk.setBlock(x, Y, z, plt[Math.trunc(Math.random() * length)]);
+				if (Math.random() > 0.995) chunk.setBlock(x, Y + 1, z, this.torch);
 				for (let y = Y - 1; y > -64; y--) chunk.setBlock(x, y, z, this.stone);
 				for (let y = Y - 1; y < 30; y++) chunk.setBlock(x, y, z, this.water);
 			}

@@ -15,11 +15,12 @@ import type {
 	ContainerOpenPacket,
 	RequestChunkRadiusPacket,
 	PlayerActionPacket,
+	TextPacket,
 } from "@bedrock/protocol";
 import { CompressionMethod, DisconnectPacket } from "@bedrock/protocol";
 import { Priority } from "@serenityjs/raknet-protocol";
 import type { Connection } from "@serenityjs/raknet-server";
-import type { InternalPlayer, Player } from "../minecraft/players/player.js";
+import type { Player } from "../minecraft/players/player.js";
 import { ClientConnect, ClientDataRecieved, ClientDisconnect } from "../types/events/client.js";
 import { GAME_HEADER, Logger } from "../types/index.js";
 import { Server } from "./Server.js";
@@ -37,6 +38,7 @@ interface PacketResolverMap {
 	[PacketIds.ContainerOpen]: ContainerOpenPacket;
 	[PacketIds.Interact]: InteractPacket;
 	[PacketIds.PlayerAction]: PlayerActionPacket;
+	[PacketIds.Text]: TextPacket;
 }
 type PacketResolver = {
 	[k in keyof PacketResolverMap]?: (client: Client, packet: PacketResolverMap[k], packetId: number) => any;
@@ -61,7 +63,7 @@ export class Client {
 	public xuid!: string;
 	public uuid!: string;
 	public playfabId!: string;
-	public player!: InternalPlayer;
+	public player!: Player;
 	public constructor(connection: Connection, server: Server) {
 		this.connection = connection;
 		this.server = server;

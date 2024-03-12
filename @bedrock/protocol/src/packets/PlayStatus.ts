@@ -28,7 +28,7 @@ import { PlayerStatus } from "../types/index.js";
 
 @PacketId(PacketIds.PlayStatus)
 export class PlayStatusPacket extends ProtocolPacket {
-	@SerializeAs(Int32) public status!: PlayerStatus;
+	@SerializeAs(Int32, Endianness.Big) public status!: PlayerStatus;
 	public static From(status: PlayerStatus) {
 		const that = new this();
 		that.status = status;

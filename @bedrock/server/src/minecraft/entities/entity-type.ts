@@ -1,3 +1,4 @@
+import { KernelConstruct, KernelPrivate } from "../../kernel/base.js";
 import { Type, Types } from "../base/Types.js";
 import type { EntityBehavior } from "./EntityBehavior.js";
 
@@ -5,6 +6,7 @@ export class EntityType extends Type {
 	public readonly behavior: EntityBehavior;
 	public readonly componentIds: string[] = [];
 	protected constructor(id: string, behavior: EntityBehavior) {
+		KernelPrivate(new.target);
 		super(id);
 		this.behavior = behavior;
 	}
@@ -17,10 +19,6 @@ export class EntityTypes extends Types<EntityType> {
 		return type;
 	}
 }
-
-export class InternalEntityType extends EntityType {
-	public constructor(id: string, behavior: EntityBehavior) {
-		super(id, behavior);
-		(EntityTypes as any).TYPES.set(id, this);
-	}
+export function ConstructEntityType(id: string, behavior: EntityBehavior): EntityType {
+	return KernelConstruct(EntityType as any, id, behavior);
 }

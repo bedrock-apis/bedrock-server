@@ -6,7 +6,7 @@ import {
 	ResourcePackStackPacket,
 	ResourceStatus,
 } from "@bedrock/protocol";
-import { InternalPlayer } from "../../minecraft/players/player.js";
+import { ConstructPlayer } from "../../minecraft/players/player.js";
 import { ClientPacketResolvers } from "../Client.js";
 
 ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, packet) => {
@@ -26,7 +26,7 @@ ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, pac
 			console.log("start game packet");
 			const defaultDimension = client.engine.world.getDefualtDimension();
 			if (!defaultDimension) return client.disconnect("No dimension available to spawn", DisconnectReason.Unknown);
-			const player = new InternalPlayer(defaultDimension, client);
+			const player = ConstructPlayer(defaultDimension, client);
 			client.player = player;
 			const startGamePacket = player.world.buildStartGamePacket(player);
 			client.post([startGamePacket, PlayStatusPacket.From(PlayerStatus.PlayerSpawn)]);

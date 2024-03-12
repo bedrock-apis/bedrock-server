@@ -35,7 +35,7 @@ abstract class GeneralNBTDefinitionWriter extends BinaryStreamDefinitionWriter {
 	public [NBTTag.Compoud](value: { [k: string]: NBTValue }): void {
 		// eslint-disable-next-line prefer-const
 		for (let [key, v] of Object.entries(value)) {
-			if ("toNBT" in v) v = (v as any).toNBT();
+			if (typeof (v as any).toNBT === "function") v = (v as any).toNBT();
 			const type = v[Symbol.NBT_TYPE];
 			if (!type) continue;
 			this.writeType(type);
@@ -106,6 +106,7 @@ abstract class GeneralNBTDefinitionReader extends BinaryStreamDefinitionReader {
 		const count = this.readArraySize();
 		const array = [];
 		for (let i = 0; i < count; i++) array.push(this[readType as 1]());
+		(array as any)[Symbol.ARRAY_TYPE] = readType;
 		return array;
 	}
 	public ReadRootTag() {

@@ -1,15 +1,13 @@
 import type { Buffer } from "@bedrock/base";
-import { BinaryStream } from "@bedrock/base";
-import { GameInitializePacket } from "@bedrock/protocol";
 import { Type, Types } from "../base/Types.js";
 
-export abstract class ItemType extends Type {
+export class ItemType extends Type {
 	public readonly runtimeId: number;
-	public abstract readonly componentBased: boolean;
-	public abstract readonly typeId: string;
-	public constructor(id: string, runtimeId: number) {
+	public readonly componentBased: boolean;
+	public constructor(id: string, runtimeId: number, componentBase = false) {
 		super(id);
 		this.runtimeId = runtimeId;
+		this.componentBased = componentBase;
 	}
 }
 
@@ -21,22 +19,12 @@ export class ItemTypes extends Types<ItemType> {
 	}
 }
 
-export class InternalItemType extends ItemType {
-	public readonly componentBased: boolean;
-	public get typeId() {
-		return this.id;
-	}
-	public constructor(id: string, runtimeId: number, componentBased: boolean = false) {
-		super(id, runtimeId);
-		this.componentBased = componentBased;
-		(ItemTypes as any).TYPES.set(id, this);
-		(ItemTypes as any).RTYPES.set(runtimeId, this);
-	}
-}
-
 export function ItemDefinitionLoader(buffer: Buffer) {
-	const str = new BinaryStream(buffer);
-	str.readVarInt(); // Packet id,
-	const a = GameInitializePacket.prototype.Deserialize(GameInitializePacket, str);
-	for (const state of a.itemStates) new InternalItemType(state.id, state.runtimeId);
+	const object = JSON.parse(buffer.toString("utf8"));
+	for (const itemTypeId of Object.keys(object)) {
+		const { runtime_id, component_based } = object[itemTypeId];
+		const itemType = new ItemType(itemTypeId, runtime_id, component_based);
+		(ItemTypes as any).TYPES.set(itemTypeId, itemType);
+		(ItemTypes as any).RTYPES.set(runtime_id, itemType);
+	}
 }

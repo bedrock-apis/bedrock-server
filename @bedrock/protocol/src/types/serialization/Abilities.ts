@@ -1,4 +1,4 @@
-import { Endianness, ProtocolSerializable, SerializeAs, Int16, Float, Int32 } from "@bedrock/base";
+import { Endianness, ProtocolSerializable, SerializeAs, Int16, Float, Int32, BinaryStream } from "@bedrock/base";
 import { AbilityLayerType } from "../enums/Abilities.js";
 
 export class AbilityLayer extends ProtocolSerializable {

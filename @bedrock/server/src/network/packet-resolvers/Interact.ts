@@ -1,5 +1,6 @@
 import { PacketIds } from "@bedrock/base";
 import {
+	ContainerOpenPacket,
 	DisconnectPacket,
 	DisconnectReason,
 	InteractActions,
@@ -7,10 +8,24 @@ import {
 	PlayerStatus,
 	ResourcePacksInfoPacket,
 	Skin,
+	WindowsIds,
+	WindowsTypes,
 } from "@bedrock/protocol";
 import { TriggerEvent } from "../../types/events/PublicEvent.js";
 import { ClientPacketResolvers } from "../Client.js";
 
 ClientPacketResolvers[PacketIds.Interact] = async (client, packet) => {
-	console.log("itneract:", InteractActions[packet.actionId]);
+	let p;
+	switch (packet.actionId) {
+		case InteractActions.OpenInventory:
+			p = new ContainerOpenPacket();
+			p.position = client.player.location;
+			p.targetRuntimeEntityId = client.player.runtimeId;
+			p.windowId = WindowsIds.Inventory;
+			p.windowType = WindowsTypes.Inventory;
+			client.post([p]);
+			break;
+		default:
+			console.log("itneract:", InteractActions[packet.actionId]);
+	}
 };

@@ -20,3 +20,4 @@ export * from "./PlayerAction.js";
 export * from "./LevelChunk.js";
 export * from "./ChunkRadius.js";
 export * from "./LevelEvent.js";
+export * from "./Text.js";
