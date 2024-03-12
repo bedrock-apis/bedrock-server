@@ -76,13 +76,15 @@ export abstract class FloatEntityComponent<T extends string> extends EntityCompo
 			this.entity.entityData[this.componentId + ".value"],
 			v,
 		);
-		TriggerEvent(this.onUpdate, new EntityComponentUpdateEventData(this)).catch(console.error);
 		TriggerEvent(this.onValueChange, data).catch(console.error);
 		this.entity.entityData[this.componentId + ".value"] = data.newValue;
+		TriggerEvent(this.onUpdate, new EntityComponentUpdateEventData(this)).catch(console.error);
 	}
 	public readonly onValueChange = new FloatEntityComponentValueChangeEvent<this>();
 }
 export abstract class AttributeComponent<T extends string> extends FloatEntityComponent<T> {
+	public get currentValue() {return super.currentValue;}
+	public set currentValue(v) { super.currentValue = v>this.effectiveMax?this.effectiveMax:v;}
 	public get effectiveMax() {
 		return this.entity.entityData[this.componentId + ".max"] ?? this.defaultMax;
 	}
@@ -92,9 +94,9 @@ export abstract class AttributeComponent<T extends string> extends FloatEntityCo
 			this.entity.entityData[this.componentId + ".max"],
 			v,
 		);
-		TriggerEvent(this.onUpdate, new EntityComponentUpdateEventData(this)).catch(console.error);
 		TriggerEvent(this.onEffectiveMaxChange, data).catch(console.error);
 		this.entity.entityData[this.componentId + ".max"] = data.newValue;
+		TriggerEvent(this.onUpdate, new EntityComponentUpdateEventData(this)).catch(console.error);
 	}
 	public get effectiveMin() {
 		return this.entity.entityData[this.componentId + ".min"] ?? this.defaultMin;
@@ -121,6 +123,8 @@ export abstract class AttributeComponent<T extends string> extends FloatEntityCo
 	public get defaultMin() {
 		return this.entity.behavior[this.componentId as "minecraft:health"]?.min ?? 0;
 	}
+	public setToDefualt(){return (this.currentValue = this.default);}
+	public setToEffectiveMax(){return (this.currentValue = this.effectiveMax);}
 	public constructor(entity: Entity, componentId: T) {
 		super(entity, componentId);
 		this.currentValue = this.default;

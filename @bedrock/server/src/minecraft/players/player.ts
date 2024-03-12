@@ -58,6 +58,10 @@ class AttributeLike implements PlayerAttributeLike {
 	public constructor(attrComp: AttributeComponent<string>) {
 		this.component = attrComp;
 	}
+	public build(){
+		const { max, id, current, default: def, min, modifiers } = this;
+		return {max, id, current, default: def, min, modifiers};
+	}
 	public toString() {
 		const { max, id, current, default: def, min, modifiers } = this;
 		return [id, current, def, max, min, modifiers.length].join(",");
@@ -65,19 +69,24 @@ class AttributeLike implements PlayerAttributeLike {
 }
 class PlayerAttributeUpdater extends UpdateAttributesPacket {
 	public readonly player;
-	public readonly changeAttributes = new Set<AttributeLike>();
+	public changeAttributes: PlayerAttributeLike[] = [];
+	public readonly knownAttributes = new Set<AttributeLike>();
 	public constructor(player: Player) {
 		super();
 		this.player = player;
 	}
 	public Update(att: AttributeLike) {
-		this.changeAttributes.add(att);
+		this.changeAttributes.push(att.build());
+		this.player._onUpdate(this);
+	}
+	public UpdateAll(){
+		for(const a of this.knownAttributes) this.changeAttributes.push(a.build());
 		this.player._onUpdate(this);
 	}
 	public toPacket(): this {
 		this.runtimeEntityId = this.player.runtimeId;
-		this.attributes = [...this.changeAttributes];
-		this.changeAttributes.clear();
+		this.attributes = this.changeAttributes;
+		this.changeAttributes = [];
 		return this;
 	}
 }
@@ -89,7 +98,7 @@ export class Player extends Entity {
 	public readonly client;
 	public readonly name;
 	public viewDistance: number = 0;
-	public readonly gameMode = GameMode.Creative;
+	public readonly gameMode = GameMode.Survival;
 	public readonly context;
 	public readonly viewManager;
 	protected constructor(dimension: Dimension, client: Client) {
@@ -102,14 +111,16 @@ export class Player extends Entity {
 			const component = this.getComponent(componentId);
 			if (component) {
 				const attLike = new AttributeLike(component as unknown as AttributeComponent<string>);
-				(component as HealthComponent).onUpdate.subscribe((e) => {
-					this._attributes.Update(attLike);
+				this._attributes.knownAttributes.add(attLike);
+				(component as HealthComponent).onUpdate.subscribe((e) => { 
+					this._attributes.Update(attLike); 
 				});
 			}
 		}
 
 		this.context = new ContextArea(this);
 		this.viewManager = new ViewManager(this);
+		this._onInit();
 	}
 	public isValid(): boolean {
 		return super.isValid() && this.engine.players.has(this);
@@ -149,7 +160,7 @@ export class Player extends Entity {
 	 *
 	 * @param isSprinting is player currently sprinting
 	 */
-	public _onIsSprintingChange(isSprinting: boolean){ 
+	public _onIsSprintingChange(isSprinting: boolean){
 		const status = this.getComponent(EntityComponentId.StatusProperties)!;
 		status.isSprinting = isSprinting;
 		const speed = this.getComponent(EntityComponentId.Movement)!;
@@ -162,6 +173,25 @@ export class Player extends Entity {
 	 * @returns return nothing if you want to cancel this message, or return recieved object.
 	 */
 	public _onTextReceived<T extends {message: string, sourceName: string}>(options: T): T | undefined{ return options; }
+	/**
+	 * Runs when player is created
+	 */
+	public _onInit(){}
+	public _onSetup(){
+		const status = this.getComponent(EntityComponentId.StatusProperties)!;
+		status.isAffectedByGravity = true;
+		status.isBreathing = true;
+		status.isHasCollision = true;
+		this._attributes.UpdateAll();
+		this._updateAll();
+	}
+	/**
+	 * Runs when player is created
+	 */
+	public _onReady(){
+		this.getComponent(EntityComponentId.Movement)!.currentValue = this._getDefaultMovement();
+		this.getComponent(EntityComponentId.Health)?.setToEffectiveMax();
+	}
 }
 export function ConstructPlayer(dimension: Dimension, client: Client): Player {
 	return KernelConstruct(Player as any, dimension, client);

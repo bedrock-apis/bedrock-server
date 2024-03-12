@@ -26,12 +26,15 @@ const loaders: { [k: string]: (buf: Buffer) => void } = {
 	[LoaderType.ItemDefinitions]: ItemDefinitionLoader,
 	[LoaderType.CreativeItems]: CreativeItemDefinitionLoader,
 };
+const knownPlugins = new Set<Plugin>();
 export class Engine {
 	public static LoadResource(type: LoaderType, resource: Buffer) {
 		loaders[type](resource);
 		return (loaded[type] = true);
 	}
+	public static registryPlugin(plugin: Plugin){ knownPlugins.add(plugin); }
 	protected readonly server;
+	public readonly registeredPlugins = new Set<Plugin>();
 	public readonly definitionRegistry = new Registry();
 	public readonly logger = new Logger(Logger.FromRGB(255, 128, 70, true, "ENGINE"));
 	public readonly onBeforePlayerLogin = new BeforePlayerLogin();
@@ -41,7 +44,7 @@ export class Engine {
 	public readonly mobs = new Set<Mob>();
 	public readonly players = new Set<Player>();
 	public readonly entities = new Set<Entity>();
-	public readonly plugins = new Set<Plugin>();
+	protected readonly tasks = new Set<any>();
 	public currentTick = 0n;
 	public oldPerformance = performance.now();
 	public delta = 0;
@@ -52,7 +55,16 @@ export class Engine {
 		this.postables.add(this);
 		this.server.broadcast(this.postables);
 		this.postables.clear();
-		for (const p of this.entities) p._onTick();
+		for (const p of this.entities) if(p.isValid()) p._onTick();
+		for (const task of this.tasks) if(task.tick--===0) {
+			try {
+				this.tasks.delete(task);
+				task.callback.call(null, ...task.params);
+			} catch (error) {
+				this.logger.error(error);
+			}
+		}
+
 		const now = performance.now();
 		this.delta = now - this.oldPerformance;
 		this.oldPerformance = now;
@@ -66,6 +78,12 @@ export class Engine {
 		tickSync.requestTime = this.currentTick;
 		return tickSync;
 	}
+	public run<T extends any[]>(callback: (...params: T)=>void, ...params: T){
+		this.tasks.add({callback,params,tick:0});
+	}
+	public runTimeout<T extends any[]>(callback: (...params: T)=>void, ticks: number, ...params: T){
+		this.tasks.add({callback,params,tick:ticks<0?0:ticks});
+	}
 	public constructor() {
 		// if (!loaded[LoaderType.BlockDefinitions]) throw new ReferenceError("Block definitions are not loaded");
 		// if (!loaded[LoaderType.ItemDefinitions]) throw new ReferenceError("Item definitions are not loaded");
@@ -76,6 +94,12 @@ export class Engine {
 		setInterval(() => {
 			console.log("Current delta: " + this.delta);
 		}, 15_000);
+		for(const plugin of knownPlugins) {
+			try {
+				plugin._onRegistry(this);
+				this.registeredPlugins.add(plugin);
+			} catch (error) { this.logger.error("Fail to register the '" + plugin.constructor.name + "' plugin.\n", error); }
+		}
 	}
 	public NewCanonicalBlockLoader(canonical_block_states: Buffer){
 		// Create a new BinaryStream from the states buffer.
@@ -150,18 +174,8 @@ export class Engine {
 			permutation.registry(this.definitionRegistry);
 		} while (!stream.cursorAtEnd());
 	}
-	public registryPlugin(plugin: Plugin){ this.plugins.add(plugin); }
 	public Start(...params: Parameters<Server["Start"]>){
-		for(const plugin of this.plugins) {
-			try {
-				plugin._onRegistry(this);
-			} catch (error) {
-				this.logger.error("Fail to register the '" + plugin.constructor.name + "' plugin.\n", error);
-			}
-		}
-
-		for(const plugin of this.plugins) if(plugin.isRegistered) plugin._onInitialization(this);
-		for(const plugin of this.plugins) if(plugin.isRegistered) plugin._onServerStart(this.server, params[0]);
+		for(const plugin of this.registeredPlugins) if(plugin.isRegistered) plugin._onServerStart(this.server, params[0]);
 		return this.server.Start(...params);
 	}
 }

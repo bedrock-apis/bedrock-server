@@ -13,7 +13,8 @@ export abstract class Plugin{
         if(typeof classModification.prototype !== "object") throw new ReferenceError("Prototype of modification must be an object");
         const proto = Object.getPrototypeOf(classModification);
         if(!native.has(proto)) throw new ReferenceError("Modification for class must be direct sub-class of that class");
-        return this.registredClasses.add([classModification,classModification.prototype, proto, proto.prototype]);
+        this.registredClasses.add([classModification,classModification.prototype, proto, proto.prototype]);
+        return this;
     }
     public static getClass<T extends keyof typeof ms>(className: T): typeof ms[T]{
         native.add(ms[className]);
