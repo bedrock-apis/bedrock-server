@@ -24,6 +24,7 @@ import {
 @PacketId(PacketIds.ResourcePacksInfo)
 export class ResourcePacksInfoPacket extends ProtocolPacket {
 	@SerializeAs(Bool) public mustAccept!: boolean;
+	@SerializeAs(Bool) public hasAddons!: boolean;
 	@SerializeAs(Bool) public hasScripts!: boolean;
 	@SerializeAs(Bool) public forceServerPacks!: boolean;
 	@SerializeAs(BehaviorPackInfo) @AsList(Int16, Endianness.Little) public behaviorPacks!: BehaviorPackInfo[];

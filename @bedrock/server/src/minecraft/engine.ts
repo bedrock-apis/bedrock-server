@@ -50,9 +50,9 @@ export class Engine {
 	public delta = 0;
 	protected tick() {
 		this.oldPerformance = performance.now();
-		this.currentTick++;
+		if(this.currentTick++ >> 4n & 0b1n) this.postables.add(this);
 		TriggerEvent(this.onTick, {engine:this,currentTick:this.currentTick}).catch(this.logger.error);
-		this.postables.add(this);
+		
 		this.server.broadcast(this.postables);
 		this.postables.clear();
 		for (const p of this.entities) if(p.isValid()) p._onTick();

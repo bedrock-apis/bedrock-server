@@ -95,11 +95,20 @@ class PerlinNoise {
 		return (1 - amt) * start + amt * end;
 	}
 }
+function adjustProximity(input: number, proximityFactor: number) {
+    // Ensure input is within the [0, 1] range
+    const clampedInput = Math.max(0, Math.min(1, input));
+
+    // Apply the sigmoid-like transformation with adjustable steepness
+    return 1 / (1 + Math.exp(-proximityFactor * (clampedInput - 0.5)));
+}
+
+const getNoise = (x: number, z: number, n: any, p: number)=>{return adjustProximity((n.GetNoise(x,z) + 1) / 2, p);};
 export class PerlinGenerator extends TerrainGenerator {
 	public readonly air = BlockPermutation.resolve("air");
 	public readonly stone = BlockPermutation.resolve("stone");
 	public readonly moss = BlockPermutation.resolve("moss_block");
-	public readonly grass = BlockPermutation.resolve("grass");
+	public readonly grass = BlockPermutation.resolve("grass_block");
 	public readonly dirt = BlockPermutation.resolve("dirt");
 	public readonly path = BlockPermutation.resolve("grass_path");
 	public readonly water = BlockPermutation.resolve("water");
@@ -111,8 +120,10 @@ export class PerlinGenerator extends TerrainGenerator {
 	public readonly noise4;
 	public readonly frequency;
 	public readonly inh;
-	public constructor(seed: number, frequency = 0.1, inh = 30) {
+	public readonly proximity;
+	public constructor(seed: number, frequency = 0.1, inh = 30, proximity = 7) {
 		super(seed);
+		this.proximity = proximity;
 		this.noise = new fastNoise();
 		this.noise.SetNoiseType(fastNoise.NoiseType.OpenSimplex2);
 		this.noise.SetSeed(seed);
@@ -149,14 +160,12 @@ export class PerlinGenerator extends TerrainGenerator {
 			for (let z = 0; z < 16; z++) {
 				const S1 = (x + XS) * f;
 				const S2 = (z + ZS) * f;
-				let Y = p.GetNoise(S1 / 10, S2 / 10) * i;
-				let s = p2.GetNoise(S1, S2);
-				if (s < 0) s = 0;
+				let Y = getNoise(S1 / 10, S2 / 10, p, this.proximity) * i;
+				const s = getNoise(S1, S2, p2, this.proximity);
 				Y += (s * i) / 2;
-				Y += (p3.GetNoise(S1 * 3, S2 * 3) * i) / 10;
+				Y += (getNoise(S1 * 3, S2 * 3, p3, this.proximity) * i) / 10;
 				// for (let y = 0; y > Y ; y--) chunk.setBlock(x, y, z, this.water);
-				Y *= (p4.GetNoise(S1 / 30, S2 / 30) + 1) * 0.6;
-				Y += 100;
+				Y *= getNoise(S1 / 30, S2 / 30, p4, this.proximity) * 1.6;
 				chunk.setBlock(x, Y, z, plt[Math.trunc(Math.random() * length)]);
 				if (Math.random() > 0.995) chunk.setBlock(x, Y + 1, z, this.torch);
 				for (let y = Y - 1; y > -64; y--) chunk.setBlock(x, y, z, this.stone);

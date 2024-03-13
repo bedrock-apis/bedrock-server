@@ -29,7 +29,7 @@ ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, pac
 			const player = ConstructPlayer(defaultDimension, client);
 			client.player = player;
 			const startGamePacket = player.world.buildStartGamePacket(player);
-			client.post([startGamePacket, PlayStatusPacket.From(PlayerStatus.PlayerSpawn)]);
+			client.post([startGamePacket,PlayStatusPacket.From(PlayerStatus.PlayerSpawn)]);
 
 			/*
 		const start = DefualtStartGamePacket();

@@ -1,5 +1,6 @@
 import { PacketIds } from "@bedrock/base";
 import {
+	DimensionDataPacket,
 	DisconnectPacket,
 	DisconnectReason,
 	PlayStatusPacket,
@@ -22,7 +23,14 @@ ClientPacketResolvers[PacketIds.Login] = async (client, packet) => {
 
 	if (bob.cancel) return client.disconnect("Your connection was canceled by server.", DisconnectReason.Kicked);
 
+	const dimensionData = new DimensionDataPacket();
+	dimensionData.definitions = [{
+		id: "minecraft:overworld",
+		generator: 5,
+		maxHeight: 512,
+		minHeight: -64,
+	}];
 	const status = new PlayStatusPacket();
 	status.status = PlayerStatus.LoginSuccess;
-	client.post([status, new ResourcePacksInfoPacket()]);
+	client.post([status, dimensionData, new ResourcePacksInfoPacket()]);
 };

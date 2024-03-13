@@ -1,5 +1,5 @@
 import { PacketIds } from "@bedrock/base";
-import { CreativeContentPacket } from "@bedrock/protocol";
+import { CreativeContentPacket, DimensionDataPacket, PlayStatusPacket, PlayerStatus } from "@bedrock/protocol";
 import { creativeItems } from "../../minecraft/items/CreativeItem.js";
 import { ClientPacketResolvers } from "../Client.js";
 
