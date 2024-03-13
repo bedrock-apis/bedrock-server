@@ -195,7 +195,7 @@ namespace SNBT {
 	function readSNBTType(source: Source) {
 		readWhiteSpace(source);
 		const mainChar = source.peek();
-		if (mainChar === "\"") return "string";
+		if (mainChar === '"') return "string";
 		else if (mainChar === "{") return "compoud";
 		else if (mainChar === "[") return "array";
 		else if ("0123456789-".includes(mainChar)) return "number";
@@ -205,7 +205,7 @@ namespace SNBT {
 	function readString(source: Source) {
 		const string = [];
 		let prefixed = false;
-		if (source.read() !== "\"") throw new TypeError("Is not a string kind");
+		if (source.read() !== '"') throw new TypeError("Is not a string kind");
 		for (const char of source) {
 			if (char === "\\") {
 				if (prefixed) string.push("\\");
@@ -220,7 +220,7 @@ namespace SNBT {
 				continue;
 			}
 
-			if (char === "\"") return string.join("");
+			if (char === '"') return string.join("");
 			string.push(char);
 		}
 
@@ -296,7 +296,7 @@ namespace SNBT {
 
 			source.offset--;
 			let key = "";
-			if (char === "\"") key = String(readString(source));
+			if (char === '"') key = String(readString(source));
 			else key = readSourceName(source);
 			char = source.read();
 			if (readWhiteSpace(source, char)) char = source.peek();

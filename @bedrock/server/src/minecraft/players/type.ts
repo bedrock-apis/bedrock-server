@@ -1,4 +1,4 @@
 import { EntityBehavior } from "../entities/EntityBehavior.js";
-import { InternalEntityType } from "../entities/entity-type.js";
+import { ConstructEntityType } from "../entities/entity-type.js";
 
-export const playerType = new InternalEntityType("minecraft:player", new EntityBehavior());
+export const playerType = ConstructEntityType("minecraft:player", new EntityBehavior());

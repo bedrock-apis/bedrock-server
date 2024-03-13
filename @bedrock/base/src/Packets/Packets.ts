@@ -55,6 +55,7 @@ export enum PacketIds {
 	PacketViolationWarning = 0x9c, // 156
 	ItemComponent = 0xa2, // 162
 	ScriptMessage = 0xb1, // 177
+	DimensionData = 0xb4,
 	ToastRequest = 0xba, // 186
 	UpdateAbilities = 0xbb, // 187
 	UpdateAdventureSettings = 0xbc, // 188

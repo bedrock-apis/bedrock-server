@@ -1,25 +1,26 @@
-import {inflateRawSync} from "node:zlib";
+import { inflateRawSync } from "node:zlib";
 import { PacketIds, PacketManager, BinaryStream } from "@bedrock/base";
-import type { PacketLike , ProtocolPacket, Buffer } from "@bedrock/base";
+import type { PacketLike, ProtocolPacket, Buffer } from "@bedrock/base";
 import type {
 	DisconnectReason,
-	ResourcePackClientResponsePacket, RequestNetworkSettingsPacket, 
-	LoginPacket, MovePlayerPacket, SetLocalPlayerAsInitializedPacket,
+	ResourcePackClientResponsePacket,
+	RequestNetworkSettingsPacket,
+	LoginPacket,
+	MovePlayerPacket,
+	SetLocalPlayerAsInitializedPacket,
 	Skin,
 	PacketViolationWarningPacket,
 	InteractPacket,
 	ContainerClosePacket,
 	ContainerOpenPacket,
 	RequestChunkRadiusPacket,
-	PlayerActionPacket
+	PlayerActionPacket,
+	TextPacket,
 } from "@bedrock/protocol";
-import { 
-	CompressionMethod,
-	DisconnectPacket
-} from "@bedrock/protocol";
+import { CompressionMethod, DisconnectPacket } from "@bedrock/protocol";
 import { Priority } from "@serenityjs/raknet-protocol";
 import type { Connection } from "@serenityjs/raknet-server";
-import type { InternalPlayer, Player } from "../minecraft/players/player.js";
+import type { Player } from "../minecraft/players/player.js";
 import { ClientConnect, ClientDataRecieved, ClientDisconnect } from "../types/events/client.js";
 import { GAME_HEADER, Logger } from "../types/index.js";
 import { Server } from "./Server.js";
@@ -30,13 +31,14 @@ interface PacketResolverMap {
 	[PacketIds.RequestNetworkSettings]: RequestNetworkSettingsPacket;
 	[PacketIds.Login]: LoginPacket;
 	[PacketIds.MovePlayer]: MovePlayerPacket;
-	[PacketIds.SetLocalPlayerAsInitialized]: SetLocalPlayerAsInitializedPacket
-	[PacketIds.PacketViolationWarning]: PacketViolationWarningPacket
-	[PacketIds.Interact]: InteractPacket
-	[PacketIds.ContainerClose]: ContainerClosePacket
-	[PacketIds.ContainerOpen]: ContainerOpenPacket
-	[PacketIds.Interact]: InteractPacket
-	[PacketIds.PlayerAction]: PlayerActionPacket
+	[PacketIds.SetLocalPlayerAsInitialized]: SetLocalPlayerAsInitializedPacket;
+	[PacketIds.PacketViolationWarning]: PacketViolationWarningPacket;
+	[PacketIds.Interact]: InteractPacket;
+	[PacketIds.ContainerClose]: ContainerClosePacket;
+	[PacketIds.ContainerOpen]: ContainerOpenPacket;
+	[PacketIds.Interact]: InteractPacket;
+	[PacketIds.PlayerAction]: PlayerActionPacket;
+	[PacketIds.Text]: TextPacket;
 }
 type PacketResolver = {
 	[k in keyof PacketResolverMap]?: (client: Client, packet: PacketResolverMap[k], packetId: number) => any;
@@ -50,7 +52,7 @@ export class Client {
 	public readonly server;
 	public readonly engine;
 	public readonly guid;
-	public readonly logger = new Logger(Logger.FromRGB(156,200,250,true,"Client"));
+	public readonly logger = new Logger(Logger.FromRGB(156, 200, 250, true, "Client"));
 	public readonly onConnect = new ClientConnect();
 	public readonly onDisconnect = new ClientDisconnect();
 	public readonly onDataRecieve = new ClientDataRecieved();
@@ -61,16 +63,16 @@ export class Client {
 	public xuid!: string;
 	public uuid!: string;
 	public playfabId!: string;
-	public player!: InternalPlayer;
-	public constructor(connection: Connection, server: Server){
+	public player!: Player;
+	public constructor(connection: Connection, server: Server) {
 		this.connection = connection;
 		this.server = server;
 		this.engine = server.engine;
 		this.guid = connection.guid;
-		this.onDataRecieve.subscribe(d=>this._resolveData(d.data));
+		this.onDataRecieve.subscribe((d) => this._resolveData(d.data));
 	}
 	public post(packets: Iterable<PacketLike>) {
-		if(this.isDisconnected) return this.logger.warn("Trying to send packet to disconnected client");
+		if (this.isDisconnected) return this.logger.warn("Trying to send packet to disconnected client");
 		const frame = Server.BuildNetworkFrame(this.hasCompression, packets);
 		this.connection.sendFrame(frame, Priority.Normal);
 	}
@@ -95,11 +97,12 @@ export class Client {
 		// Compression
 		if (this.hasCompression) {
 			const compressionMethod = buffer[1];
-			buffer = (compressionMethod === CompressionMethod.None)?buffer.slice(2):inflateRawSync(buffer.slice(2));
+			buffer = compressionMethod === CompressionMethod.None ? buffer.slice(2) : inflateRawSync(buffer.slice(2));
 		} else {
 			buffer = buffer.slice(1);
 		}
 
-		for (const packet of PacketManager.DestructPayload(new BinaryStream(buffer), this.logger)) this.processPacket(packet).catch(this.logger.error);
+		for (const packet of PacketManager.DestructPayload(new BinaryStream(buffer), this.logger))
+			this.processPacket(packet).catch(this.logger.error);
 	}
 }

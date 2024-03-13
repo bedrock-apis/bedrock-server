@@ -35,7 +35,7 @@ abstract class GeneralNBTDefinitionWriter extends BinaryStreamDefinitionWriter {
 	public [NBTTag.Compoud](value: { [k: string]: NBTValue }): void {
 		// eslint-disable-next-line prefer-const
 		for (let [key, v] of Object.entries(value)) {
-			if ("toNBT" in v) v = (v as any).toNBT();
+			if (typeof (v as any).toNBT === "function") v = (v as any).toNBT();
 			const type = v[Symbol.NBT_TYPE];
 			if (!type) continue;
 			this.writeType(type);
@@ -106,6 +106,7 @@ abstract class GeneralNBTDefinitionReader extends BinaryStreamDefinitionReader {
 		const count = this.readArraySize();
 		const array = [];
 		for (let i = 0; i < count; i++) array.push(this[readType as 1]());
+		(array as any)[Symbol.ARRAY_TYPE] = readType;
 		return array;
 	}
 	public ReadRootTag() {
@@ -137,12 +138,24 @@ abstract class GeneralNBTDefinitionReader extends BinaryStreamDefinitionReader {
 
 class NBT {
 	protected constructor() {}
-	public static ReadRootTag(stream: BinaryStream): NBTValue { throw new ReferenceError("No implementation error"); }
-	public static ReadTag(stream: BinaryStream): NBTValue {throw new ReferenceError("No implementation error"); }
-	public static Read(tag: number, stream: BinaryStream): NBTValue { throw new ReferenceError("No implementation error"); }
-	public static WriteRootTag(stream: BinaryStream, tag: NBTValue) { throw new ReferenceError("No implementation error"); }
-	public static WriteTag(stream: BinaryStream, tag: NBTValue) { throw new ReferenceError("No implementation error"); }
-	public static Write(stream: BinaryStream, tag: NBTValue) { throw new ReferenceError("No implementation error"); }
+	public static ReadRootTag(stream: BinaryStream): NBTValue {
+		throw new ReferenceError("No implementation error");
+	}
+	public static ReadTag(stream: BinaryStream): NBTValue {
+		throw new ReferenceError("No implementation error");
+	}
+	public static Read(tag: number, stream: BinaryStream): NBTValue {
+		throw new ReferenceError("No implementation error");
+	}
+	public static WriteRootTag(stream: BinaryStream, tag: NBTValue) {
+		throw new ReferenceError("No implementation error");
+	}
+	public static WriteTag(stream: BinaryStream, tag: NBTValue) {
+		throw new ReferenceError("No implementation error");
+	}
+	public static Write(stream: BinaryStream, tag: NBTValue) {
+		throw new ReferenceError("No implementation error");
+	}
 }
 
 export {

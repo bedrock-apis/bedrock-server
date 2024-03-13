@@ -3,8 +3,17 @@ import { CompressionMethod, DisconnectReason, NetworkSettingsPacket } from "@bed
 import { ClientPacketResolvers } from "../Client.js";
 
 ClientPacketResolvers[PacketIds.RequestNetworkSettings] = (client, packet) => {
-	if (packet.protocol > client.server.protocol) return client.disconnect("Outdated server: " + `${packet.protocol} > ${client.server.protocol}`, DisconnectReason.OutdatedServer);
-	else if (packet.protocol < client.server.protocol) return client.disconnect("Outdated client" + `${packet.protocol} < ${client.server.protocol}`, DisconnectReason.OutdatedClient);
+	/*
+	if (packet.protocol > client.server.protocol)
+		return client.disconnect(
+			"Outdated server: " + `${packet.protocol} > ${client.server.protocol}`,
+			DisconnectReason.OutdatedServer,
+		);
+	else if (packet.protocol < client.server.protocol)
+		return client.disconnect(
+			"Outdated client" + `${packet.protocol} < ${client.server.protocol}`,
+			DisconnectReason.OutdatedClient,
+		);*/
 	const p = new NetworkSettingsPacket();
 	p.compressionThreshold = 256;
 	p.compressionMethod = CompressionMethod.Zlib;

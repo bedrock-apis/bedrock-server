@@ -13,7 +13,8 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint --ext .ts src",
-    "dev": "nodemon --config ../../nodemon.json src/index.ts"
+    "dev": "nodemon --config ../../nodemon.json src/index.ts",
+    "download":"node ./scripts/download.js"
   },
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",

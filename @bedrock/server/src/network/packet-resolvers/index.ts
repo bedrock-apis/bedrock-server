@@ -7,3 +7,5 @@ import "./SetLocalPlayerAsInitialized.js";
 import "./Interact.js";
 import "./ChunkRadius.js";
 import "./PlayerAction.js";
+import "./ContainerClose.js";
+import "./Text.js";

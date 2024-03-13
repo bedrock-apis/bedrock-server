@@ -69,6 +69,6 @@ defualtGameInitializePacket.serverAuthoritativeInventory = true;
 defualtGameInitializePacket.engine = "*";
 defualtGameInitializePacket.blockPaletteChecksum = 0n;
 defualtGameInitializePacket.worldTemplateId = "00000000000000000000000000000000";
-defualtGameInitializePacket.clientSideGeneration = true;
+defualtGameInitializePacket.clientSideGeneration = false;
 defualtGameInitializePacket.blockNetworkIdsAreHashes = false; // Important
 defualtGameInitializePacket.serverControlledSounds = false;

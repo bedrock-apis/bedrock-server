@@ -12,6 +12,7 @@
     "lint": "yarn workspaces run lint --fix",
     "shake": "yarn lint & yarn format & yarn build",
     "dev": "yarn workspace @bedrock/testing run dev",
+    "download": "yarn workspace @bedrock/testing run download",
     "reload": "yarn workspace @bedrock/testing run build & yarn workspace @bedrock/testing run dev",
     "reset": "powershell -executionpolicy bypass ./clear.ps1 & yarn build"
   },

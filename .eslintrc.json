@@ -8,6 +8,8 @@
 		"import/extensions": 0,
 		"eol-last": "warn",
         "func-names": "off",
+        "indent":"off",
+        "typescript-eslint/no-dynamic-delete":"off",
         "no-restricted-globals": "off",
 		"@typescript-eslint/semi": "error",
 		"@typescript-eslint/consistent-type-definitions": ["error", "interface"],
@@ -27,10 +29,6 @@
 		"eslint-plugin-import/no-extraneous-dependencies": "off",
 		"@typescript-eslint/member-delimiter-style": "off",
         "no-multi-assign": "off",
-        "indent": [
-            "error",
-            "tab"
-        ],
         "linebreak-style": [
             "error",
             "unix"

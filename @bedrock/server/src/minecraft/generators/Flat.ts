@@ -4,7 +4,7 @@ import { TerrainGenerator } from "./Generator.js";
 
 export class TerrainFlat extends TerrainGenerator {
 	public readonly flatLayers;
-	public constructor(flatLayers: BlockPermutation[]){
+	public constructor(flatLayers: BlockPermutation[]) {
 		super(0);
 		this.flatLayers = flatLayers;
 	}
@@ -24,11 +24,11 @@ export class TerrainFlat extends TerrainGenerator {
 		return chunk;
 	}
 }
-export class BetterFlat extends TerrainGenerator{
+export class BetterFlat extends TerrainGenerator {
 	public readonly layersMetrix;
-	public constructor(flatLayers: (BlockPermutation | BlockPermutation[])[]){
+	public constructor(flatLayers: (BlockPermutation | BlockPermutation[])[]) {
 		super(0);
-		this.layersMetrix = flatLayers.map(e=>Array.isArray(e)?e:[e]);
+		this.layersMetrix = flatLayers.map((e) => (Array.isArray(e) ? e : [e]));
 	}
 	/**
 	 * Generates a chunk.
@@ -48,13 +48,23 @@ export class BetterFlat extends TerrainGenerator{
 		// Return the chunk.
 		return chunk;
 	}
-	public static BasicFlat(){
+	public static BasicFlat() {
 		return new this([
 			BlockPermutation.resolve("minecraft:bedrock"),
-			[BlockPermutation.resolve("minecraft:dirt",{"dirt_type":"coarse"}),BlockPermutation.resolve("minecraft:dirt",{"dirt_type":"coarse"})],
-			[BlockPermutation.resolve("minecraft:dirt"),BlockPermutation.resolve("minecraft:dirt",{"dirt_type":"coarse"})],
-			[BlockPermutation.resolve("minecraft:dirt"),BlockPermutation.resolve("minecraft:dirt")],
-			[BlockPermutation.resolve("minecraft:grass"),BlockPermutation.resolve("minecraft:grass"),BlockPermutation.resolve("minecraft:moss_block"),BlockPermutation.resolve("minecraft:moss_block"),BlockPermutation.resolve("minecraft:moss_block"),BlockPermutation.resolve("minecraft:moss_block")]
+			[
+				BlockPermutation.resolve("minecraft:dirt", { dirt_type: "coarse" }),
+				BlockPermutation.resolve("minecraft:dirt", { dirt_type: "coarse" }),
+			],
+			[BlockPermutation.resolve("minecraft:dirt"), BlockPermutation.resolve("minecraft:dirt", { dirt_type: "coarse" })],
+			[BlockPermutation.resolve("minecraft:dirt"), BlockPermutation.resolve("minecraft:dirt")],
+			[
+				BlockPermutation.resolve("minecraft:grass"),
+				BlockPermutation.resolve("minecraft:grass"),
+				BlockPermutation.resolve("minecraft:moss_block"),
+				BlockPermutation.resolve("minecraft:moss_block"),
+				BlockPermutation.resolve("minecraft:moss_block"),
+				BlockPermutation.resolve("minecraft:moss_block"),
+			],
 		]);
 	}
 }

@@ -1,18 +1,18 @@
-import type { Buffer} from "node:buffer";
-import type { Int16} from "@bedrock/base";
-import { LightNBT, NBTTag , Byte, Int32, String32} from "@bedrock/base";
+import type { Buffer } from "node:buffer";
+import { LightNBT, NBTTag, Byte, Int32 } from "@bedrock/base";
 import { BinaryStream } from "@serenityjs/binarystream";
 import { Types } from "../base/Types.js";
-import { InternalBlockPermutation, type BlockPermutation } from "./BlockPermutation.js";
-import { InternalBlockStateType , BlockStateTypes } from "./BlockStateTypes.js";
-import type { BlockType} from "./BlockType.js";
-import { InternalBlockType} from "./BlockType.js";
+import { ConstructBlockPermutationEmpty, SetTypeFor, type BlockPermutation } from "./BlockPermutation.js";
+import type { BlockStateType } from "./BlockStateTypes.js";
+import { BlockStateTypes, ConstructBlockStateType } from "./BlockStateTypes.js";
+import type { BlockType } from "./BlockType.js";
+import { ConstructBlockType } from "./BlockType.js";
 
 // @ts-expect-error sometimes you just want to do these things
 export class BlockTypes extends Types<BlockType> {
-	protected static TYPES: Map<string, BlockTypes> = new Map;
-	protected static readonly PERMUTATIONS: Map<number, BlockPermutation> = new Map;
-};
+	protected static TYPES: Map<string, BlockTypes> = new Map();
+	protected static readonly PERMUTATIONS: Map<number, BlockPermutation> = new Map();
+}
 /*
 export function MapRawBlockTypes(rawBlockTypes: Buffer){
 	// Create a new stream from the MAPPED_BLOCK_STATES file
@@ -36,21 +36,21 @@ export function MapRawBlockTypes(rawBlockTypes: Buffer){
 	}
 }*/
 
-export function CanonicalBlockTypeMapper(canonical_block_states: Buffer){
+export function CanonicalBlockTypeMapper(canonical_block_states: Buffer) {
 	// Create a new BinaryStream from the states buffer.
 	const stream = new BinaryStream(canonical_block_states);
 	let runtimeId = 0;
-	const types = (BlockTypes as any).TYPES as Map<string, InternalBlockType>;
-	const permutations = (BlockTypes as any).PERMUTATIONS as Map<number, InternalBlockPermutation>;
-	const blockStates = (BlockStateTypes as any).TYPES as Map<string, InternalBlockStateType>;
+	const types = (BlockTypes as any).TYPES as Map<string, BlockType>;
+	const permutations = (BlockTypes as any).PERMUTATIONS as Map<number, BlockPermutation>;
+	const blockStates = (BlockStateTypes as any).TYPES as Map<string, BlockStateType>;
 	do {
 		// Read the root tag.
-		const {name, states} = LightNBT.ReadRootTag(stream) as {
+		const { name, states } = LightNBT.ReadRootTag(stream) as {
 			name: string;
 			states: Record<string, Byte | Int32 | string>;
 			version: number;
 		};
-		
+
 		// Create a runtime ID.
 		const names = [] as any[];
 		const values = [] as any[];
@@ -60,47 +60,48 @@ export function CanonicalBlockTypeMapper(canonical_block_states: Buffer){
 		for (const name of Object.keys(states)) {
 			names.push(name);
 			const type = states[name] as any;
-			switch(type[Symbol.NBT_TYPE]){
-			case NBTTag.Byte: 
-				values.push(Boolean(type.valueOf()));
-				valueTypes.push(Byte);
-				break;
-			case NBTTag.Int32:
-				values.push(Number(type));
-				valueTypes.push(Int32);
-				break;
-			case NBTTag.String: 
-				values.push(String(type));
-				valueTypes.push(String);
-				break;
-			default: throw new ReferenceError("Faild to map this type of value: " + NBTTag[type[Symbol.NBT_TYPE]]);
+			switch (type[Symbol.NBT_TYPE]) {
+				case NBTTag.Byte:
+					values.push(Boolean(type.valueOf()));
+					valueTypes.push(Byte);
+					break;
+				case NBTTag.Int32:
+					values.push(Number(type));
+					valueTypes.push(Int32);
+					break;
+				case NBTTag.String:
+					values.push(String(type));
+					valueTypes.push(String);
+					break;
+				default:
+					throw new ReferenceError("Faild to map this type of value: " + NBTTag[type[Symbol.NBT_TYPE]]);
 			}
 
 			let bState = blockStates.get(name);
-			if(!bState){
-				bState = new InternalBlockStateType(name, typeof values[index] as "string", new Set());
+			if (!bState) {
+				bState = ConstructBlockStateType(name, typeof values[index] as "string", new Set());
 			}
 
 			mappedNames[name] = index;
 			blockStates.set(name, bState);
-			bState.values.add(values[index]);
+			(bState as any)._values.add(values[index]);
 			index++;
 		}
-	
-		const permutation = new InternalBlockPermutation(runtimeId++, values);
+
+		const permutation = ConstructBlockPermutationEmpty(runtimeId++, values);
 		permutations.set(permutation.runtimeId, permutation);
-		
+
 		let type = types.get(name);
-		if(!type) {
-			type = new InternalBlockType(name, permutation, {
+		if (!type) {
+			type = ConstructBlockType(name, permutation, {
 				defualtValues: values,
 				types: valueTypes,
-				names: mappedNames
+				names: mappedNames,
 			});
 		}
 
-		permutation.setType(type);
-		type.permutations.set(permutation.uniqueId, permutation);
+		SetTypeFor(permutation, type);
+		(type as any).permutations.set(permutation.uniqueId, permutation);
 		types.set(name, type);
 	} while (!stream.cursorAtEnd());
 }

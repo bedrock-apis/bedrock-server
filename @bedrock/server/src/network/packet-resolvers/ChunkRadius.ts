@@ -4,6 +4,7 @@ import { ClientPacketResolvers } from "../Client.js";
 
 ClientPacketResolvers[PacketIds.RequestChunkRadius] = async (client, packet) => {
 	const p = new ChunkRadiusUpdatePacket();
-	p.chunkRadius = 8;
+	p.chunkRadius = packet.chunkRadius;
 	client.post([p]);
+	client.player.viewDistance = packet.chunkRadius;
 };

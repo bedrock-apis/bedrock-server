@@ -19,7 +19,7 @@ const LoggerInfo = {
 	Info: fr(ConsoleColor.Blue + ConsoleColor.Bright, "INFO"),
 	Log: fr(ConsoleColor.White + ConsoleColor.Bright, "LOG"),
 	Warn: fr(ConsoleColor.Yellow, "WARN"),
-	Error: fr(ConsoleColor.Red + ConsoleColor.Bright, "ERROR")
+	Error: fr(ConsoleColor.Red + ConsoleColor.Bright, "ERROR"),
 };
 export class Logger {
 	public static DEBUG: boolean = false;
@@ -38,7 +38,13 @@ export class Logger {
 		return `<${date.getUTCFullYear()}-${date.getMonth()}-${date.getUTCDate()}:${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}>`;
 	}
 	public debug(...params: any[]) {
-		if (Logger.DEBUG) console.debug("\u001B[90m" + this.getTimeFormated() + RESET_COLOR, ...this.roots, `[${LoggerInfo.Debug}]`, ...params);
+		if (Logger.DEBUG)
+			console.debug(
+				"\u001B[90m" + this.getTimeFormated() + RESET_COLOR,
+				...this.roots,
+				`[${LoggerInfo.Debug}]`,
+				...params,
+			);
 	}
 	public info(...params: any[]) {
 		console.info("\u001B[90m" + this.getTimeFormated() + RESET_COLOR, ...this.roots, `[${LoggerInfo.Info}]`, ...params);
@@ -50,14 +56,21 @@ export class Logger {
 		console.warn("\u001B[90m" + this.getTimeFormated() + RESET_COLOR, ...this.roots, `[${LoggerInfo.Warn}]`, ...params);
 	}
 	public error(...params: any[]) {
-		console.error("\u001B[90m" + this.getTimeFormated() + RESET_COLOR, ...this.roots, `[${LoggerInfo.Error}]`, ...params);
+		console.error(
+			"\u001B[90m" + this.getTimeFormated() + RESET_COLOR,
+			...this.roots,
+			`[${LoggerInfo.Error}]`,
+			...params,
+		);
 	}
-	public static FromConsoleColor(conolseColor: number, text: string){
-		return `\u001B[${conolseColor + 30}m` + (text??"");
+	public static FromConsoleColor(conolseColor: number, text: string) {
+		return `\u001B[${conolseColor + 30}m` + (text ?? "");
 	}
-	public static FromRGB(r: number, g: number, b: number, foreground = true, text?: string){
-		 return `\u001B[${foreground?3:4}8;2;${r};${g};${b}m` + (text??"");
+	public static FromRGB(r: number, g: number, b: number, foreground = true, text?: string) {
+		return `\u001B[${foreground ? 3 : 4}8;2;${r};${g};${b}m` + (text ?? "");
 	}
 }
 
-function fr(color: number, text: string){ return `\u001B[${color + 30}m${text}\u001B[39m`; }
+function fr(color: number, text: string) {
+	return `\u001B[${color + 30}m${text}\u001B[39m`;
+}

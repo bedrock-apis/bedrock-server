@@ -65,12 +65,7 @@ export class LoginToken extends ProtocolType {
 	public clientData!: ClientData;
 	public identityData!: IdentityData;
 	public publicKey!: string;
-	public Serialize(
-		that: Constructor<this>,
-		stream: BinaryStream,
-		value: this,
-		endian?: Endianness | undefined,
-	): void {
+	public Serialize(that: Constructor<this>, stream: BinaryStream, value: this, endian?: Endianness | undefined): void {
 		/*
 		stream.writeVarInt(value.identity.length + value.client.length + 8);
 		stream.writeString32(value.identity, Endianness.Little);

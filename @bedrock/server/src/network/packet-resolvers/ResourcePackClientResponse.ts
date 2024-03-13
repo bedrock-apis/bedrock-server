@@ -1,31 +1,37 @@
-import { PacketIds, } from "@bedrock/base";
-import { DisconnectReason, PlayStatusPacket, PlayerStatus, ResourcePackStackPacket, ResourceStatus } from "@bedrock/protocol";
-import { InternalPlayer } from "../../minecraft/players/player.js";
+import { PacketIds } from "@bedrock/base";
+import {
+	DisconnectReason,
+	PlayStatusPacket,
+	PlayerStatus,
+	ResourcePackStackPacket,
+	ResourceStatus,
+} from "@bedrock/protocol";
+import { ConstructPlayer } from "../../minecraft/players/player.js";
 import { ClientPacketResolvers } from "../Client.js";
 
-ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, packet) => {		
+ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, packet) => {
 	switch (packet.status) {
-	case ResourceStatus.None: 
-	case ResourceStatus.Refused:
-	case ResourceStatus.SendPacks:
-		throw new Error("ResourceStatus.SendPacks is not implemented!");
-	case ResourceStatus.HaveAllPacks: {
-		const stack = new ResourcePackStackPacket();
-		stack.gameVersion = "0.0.0.0";
-		client.post([stack]);
-		break;
-	}
+		case ResourceStatus.None:
+		case ResourceStatus.Refused:
+		case ResourceStatus.SendPacks:
+			throw new Error("ResourceStatus.SendPacks is not implemented!");
+		case ResourceStatus.HaveAllPacks: {
+			const stack = new ResourcePackStackPacket();
+			stack.gameVersion = "0.0.0.0";
+			client.post([stack]);
+			break;
+		}
 
-	case ResourceStatus.Completed: {
-		console.log("start game packet");
-		const defaultDimension = client.engine.world.getDefualtDimension();
-		if(!defaultDimension) return client.disconnect("No dimension available to spawn", DisconnectReason.Unknown);
-		const player = new InternalPlayer(defaultDimension, client);
-		client.player = player;
-		const startGamePacket = player.world.buildStartGamePacket(player);
-		client.post([startGamePacket, PlayStatusPacket.From(PlayerStatus.PlayerSpawn)]);
-		
-		/*
+		case ResourceStatus.Completed: {
+			console.log("start game packet");
+			const defaultDimension = client.engine.world.getDefualtDimension();
+			if (!defaultDimension) return client.disconnect("No dimension available to spawn", DisconnectReason.Unknown);
+			const player = ConstructPlayer(defaultDimension, client);
+			client.player = player;
+			const startGamePacket = player.world.buildStartGamePacket(player);
+			client.post([startGamePacket,PlayStatusPacket.From(PlayerStatus.PlayerSpawn)]);
+
+			/*
 		const start = DefualtStartGamePacket();
 		client.server.worldSettings.AssignToStartGamePacket(start);
 		if(client.loginTask) await client.loginTask; // Wait required initialization for player
@@ -80,6 +86,6 @@ ClientPacketResolvers[PacketIds.ResourcePackClientResponse] = async (client, pac
             await session.sendChunk(chunk);
         }
     */
-	}
+		}
 	}
 };

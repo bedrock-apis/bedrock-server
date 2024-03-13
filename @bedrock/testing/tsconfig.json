@@ -4,5 +4,5 @@
 		"declaration": true,
 		"outDir": "./dist",
 	},
-	"include": ["src/**/*.ts", "../../bin/server/src/protocol/packets/KnownPackets/CreativeContent.ts", "../../bin/server/src/protocol/packets/KnownPackets/DataPacks.ts", "../../bin/server/src/protocol/packets/KnownPackets/Disconnect.ts", "../../bin/server/src/protocol/packets/KnownPackets/GameInitialize.ts", "../../bin/server/src/protocol/packets/KnownPackets/Login.ts", "../../bin/server/src/protocol/packets/KnownPackets/MovePlayer.ts", "../../bin/server/src/protocol/packets/KnownPackets/NetworkSettings.ts", "../../bin/server/src/protocol/packets/KnownPackets/PlayerList.ts", "../../bin/server/src/protocol/packets/KnownPackets/PlayStatus.ts", "../../bin/server/src/protocol/packets/KnownPackets/RequestNetworkSettings.ts", "../../bin/server/src/protocol/packets/KnownPackets/SetLocalPlayerAsInitialized.ts", "../../bin/server/src/protocol/packets/KnownPackets/UpdateAbilities.ts", "../../bin/server/src/protocol/packets/KnownPackets/UpdateAttributes.ts", "../../bin/server/src/protocol/packets/KnownPackets/UpdateEntityData.ts"]
+	"include": ["src/**/*.ts"]
 }

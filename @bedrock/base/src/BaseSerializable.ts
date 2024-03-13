@@ -1,6 +1,5 @@
 import type { BinaryStream, Endianness } from "@serenityjs/binarystream";
 
-
 export interface RawWritable<T> {
 	[Symbol.RAW_WRITABLE](stream: BinaryStream, value: T, endian?: Endianness): void;
 }

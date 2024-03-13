@@ -3,5 +3,7 @@ import { ViolationSeverity } from "../../../../protocol/dist/types/enums/Violati
 import { ClientPacketResolvers } from "../Client.js";
 
 ClientPacketResolvers[PacketIds.PacketViolationWarning] = (client, packet) => {
-	client.logger.error(`Packet Violation Warning for ${PacketIds[packet.brokenPacketId]}, reason: ${packet.reason}, severity: ${ViolationSeverity[packet.severity]}`);
+	client.logger.error(
+		`Packet Violation Warning for ${PacketIds[packet.brokenPacketId]}, reason: ${packet.reason}, severity: ${ViolationSeverity[packet.severity]}`,
+	);
 };

@@ -1,9 +1,9 @@
-import {deflateRawSync} from "node:zlib";
-import type { PacketLike, ProtocolPacket} from "@bedrock/base";
+import { deflateRawSync } from "node:zlib";
+import type { PacketLike, ProtocolPacket } from "@bedrock/base";
 import { Buffer, BinaryStream, PacketManager } from "@bedrock/base";
 import { CompressionMethod } from "@bedrock/protocol";
 import { Frame, Priority, Reliability } from "@serenityjs/raknet-protocol";
-import type { Connection} from "@serenityjs/raknet-server";
+import type { Connection } from "@serenityjs/raknet-server";
 import { Server as Network } from "@serenityjs/raknet-server";
 import type { Engine } from "../minecraft/engine.js";
 import { TriggerEvent } from "../types/events/PublicEvent.js";
@@ -17,11 +17,11 @@ export class Server {
 	public readonly engine: Engine;
 	public readonly onClientJoin = new ClientJoinEvent();
 	public readonly onClientLeave = new ClientLeaveEvent();
-    
-	public readonly logger = new Logger(Logger.FromRGB(190,130,40,true,"Server"));
-	public readonly clients = new Map<bigint, Client>;
-	public readonly gamers = new Set<Client>;
-    
+
+	public readonly logger = new Logger(Logger.FromRGB(190, 130, 40, true, "Server"));
+	public readonly clients = new Map<bigint, Client>();
+	public readonly gamers = new Set<Client>();
+
 	public IsNetworkRunning = false;
 	public protocol!: number;
 	public constructor(engine: Engine) {
@@ -30,19 +30,29 @@ export class Server {
 	public Start(config: Config) {
 		if (this.IsNetworkRunning) return false;
 		if (!this.network)
-			(this as any).network = new Network(config.address??"0.0.0.0", config.port??19_132, config.maxConnections ?? 10) as any;
+			(this as any).network = new Network(
+				config.address ?? "0.0.0.0",
+				config.port ?? 19_132,
+				config.maxConnections ?? 10,
+			) as any;
 		this.network.on("connect", (c) => this._onConnect(c));
 		this.network.on("disconnect", async (c) => this._onDisconnect(c));
 		this.network.on("encapsulated", async (c, d) => this._onDataReceive(c, d));
 		(this as any).config = config;
-		const success = this.network.start(this.protocol = config.protocol, config.version);
-		this.logger.debug("Server is listening on", config.address??"0.0.0.0", "port:", config?.port??19_132);
+		const success = this.network.start((this.protocol = config.protocol), config.version);
+		this.logger.debug("Server is listening on", config.address ?? "0.0.0.0", "port:", config?.port ?? 19_132);
 		return success;
 	}
 	public broadcast(packets: Iterable<PacketLike>) {
 		const frame = Server.BuildNetworkFrame(true, packets);
 		let i = 0;
-		for (const client of this.gamers) if(client.isDisconnected) continue; else { client.connection.sendFrame(frame, Priority.Normal); i++;}
+		for (const client of this.gamers)
+			if (client.isDisconnected) continue;
+			else {
+				client.connection.sendFrame(frame, Priority.Normal);
+				i++;
+			}
+
 		return i;
 	}
 	private _onConnect(c: Connection) {
@@ -62,7 +72,7 @@ export class Server {
 	private async _onDataReceive(c: Connection, data: Buffer) {
 		if (!this.clients.has(c.guid)) return this.logger.debug("Received packet from unconnected client " + c.guid);
 		const client = this.clients.get(c.guid) as Client;
-		TriggerEvent(client.onDataRecieve, {data}).catch(this.logger.error);
+		TriggerEvent(client.onDataRecieve, { data }).catch(this.logger.error);
 	}
 
 	/// ////////////////////////////////////////////
@@ -94,7 +104,10 @@ export class Server {
 		const encrypted = false ? deflated : deflated;
 
 		// We will then construct the final payload with the game header and the encrypted compressed payload.
-		const payload = Buffer.concat([Buffer.from(useCompression?[GAME_HEADER,0]:[GAME_HEADER, CompressionMethod.Zlib]), encrypted]);
+		const payload = Buffer.concat([
+			Buffer.from(useCompression ? [GAME_HEADER, 0] : [GAME_HEADER, CompressionMethod.Zlib]),
+			encrypted,
+		]);
 
 		// Finally we will assemble a new frame with the payload.
 		// The frame contains the reliability and priority of the packet.

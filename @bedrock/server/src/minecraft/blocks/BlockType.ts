@@ -1,33 +1,40 @@
-import type { NBTData, NBTTag, RawWritable } from "@bedrock/base";
+import type { RawWritable } from "@bedrock/base";
+import { KernelConstruct, KernelPrivate } from "../../kernel/base.js";
 import { Type } from "../base/Types.js";
-import type { BlockPermutation, InternalBlockPermutation } from "./BlockPermutation.js";
+import type { BlockPermutation } from "./BlockPermutation.js";
 import { BlockStateTypes, type BlockStateType } from "./BlockStateTypes.js";
 
-export abstract class BlockType extends Type{
-	public readonly defaultRuntimeId: number;
-	public readonly abstract defaultPermutation: BlockPermutation;
-	protected readonly abstract permutations: Map<string, BlockPermutation>;
-	public abstract readonly states: any;
-	protected constructor(id: string, runtimeId: number) {
+export interface BlockTypeDefinition {
+	defualtValues: any[];
+	names: { [k: string]: number };
+	types: RawWritable<number | string>[];
+};
+export class BlockType extends Type {
+	public readonly defaultRuntimeId!: number;
+	public readonly defaultPermutation!: BlockPermutation;
+	protected readonly permutations: Map<string, BlockPermutation> = new Map();
+	public readonly states!: BlockTypeDefinition;
+	protected constructor(id: string) {
+		KernelPrivate(new.target);
 		super(id);
-		this.defaultRuntimeId = runtimeId;
 	}
-	public getAllPermutations(){return this.permutations.values();}
+	public getAllPermutations() {
+		return this.permutations.values();
+	}
 	public *getBlockStates(): IterableIterator<BlockStateType> {
 		for (const name of Object.keys(this.states.names)) yield BlockStateTypes.get(name) as BlockStateType;
 	}
 }
-export class InternalBlockType extends BlockType{
-	public readonly permutations: Map<string, BlockPermutation> = new Map();
-	public readonly states;
-	public readonly defaultPermutation: BlockPermutation;
-	public constructor(id: string, defualtPermutation: InternalBlockPermutation, definition: {
-		defualtValues: any[],
-		names: {[k: string]: number},
-		types: RawWritable<number | string>[]
-	}){
-		super(id, defualtPermutation.runtimeId);
-		this.defaultPermutation = defualtPermutation;
-		this.states = definition;
-	}
+export function ConstructBlockType(id: string, defualtPermutation: BlockPermutation, definition: BlockTypeDefinition) {
+	const type = KernelConstruct(BlockType as any, id);
+	type.defaultPermutation = defualtPermutation;
+	type.defaultRuntimeId = defualtPermutation.runtimeId;
+	type.states = definition;
+	return type as BlockType;
+}
+
+export function ConstructBlockTypeEmpty(id: string, definition: BlockTypeDefinition){
+	const type = KernelConstruct(BlockType as any, id);
+	type.states = definition;
+	return type as BlockType;
 }

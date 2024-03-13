@@ -1,15 +1,36 @@
-import { Bool, SerializeAs, AsList, Int16, Endianness, VarInt, VarString, Int32, Byte, ProtocolPacket, PacketIds, PacketId } from "@bedrock/base";
-import { BehaviorPackInfo, DataPackInfo, Experiment, PackLink, ResourceStatus, TexturePackInfo } from "../types/index.js";
+import {
+	Bool,
+	SerializeAs,
+	AsList,
+	Int16,
+	Endianness,
+	VarInt,
+	VarString,
+	Int32,
+	Byte,
+	ProtocolPacket,
+	PacketIds,
+	PacketId,
+} from "@bedrock/base";
+import {
+	BehaviorPackInfo,
+	DataPackInfo,
+	Experiment,
+	PackLink,
+	ResourceStatus,
+	TexturePackInfo,
+} from "../types/index.js";
 
 @PacketId(PacketIds.ResourcePacksInfo)
 export class ResourcePacksInfoPacket extends ProtocolPacket {
 	@SerializeAs(Bool) public mustAccept!: boolean;
+	@SerializeAs(Bool) public hasAddons!: boolean;
 	@SerializeAs(Bool) public hasScripts!: boolean;
 	@SerializeAs(Bool) public forceServerPacks!: boolean;
 	@SerializeAs(BehaviorPackInfo) @AsList(Int16, Endianness.Little) public behaviorPacks!: BehaviorPackInfo[];
 	@SerializeAs(TexturePackInfo) @AsList(Int16, Endianness.Little) public texturePacks!: TexturePackInfo[];
 	@SerializeAs(PackLink) @AsList(VarInt) public links!: PackLink[];
-};
+}
 
 @PacketId(PacketIds.ResourcePackStack)
 export class ResourcePackStackPacket extends ProtocolPacket {

@@ -1,7 +1,23 @@
-import type { Constructor} from "@bedrock/base";
-import { BedrockNBT, Endianness, ProtocolType, BinaryStream, NewSerializable, ProtocolSerializable, VarString, Int16, SerializeAs, BRootTag, LRootTag} from "@bedrock/base";
+import type { Constructor } from "@bedrock/base";
+import {
+	BedrockNBT,
+	Endianness,
+	ProtocolType,
+	BinaryStream,
+	NewSerializable,
+	ProtocolSerializable,
+	VarString,
+	Int16,
+	SerializeAs,
+	BRootTag,
+	LRootTag,
+} from "@bedrock/base";
 
-export interface ItemLegacyLike{
+export interface ItemLegacyEntryLike{
+	entryId: number,
+	item: ItemLegacyLike
+}
+export interface ItemLegacyLike {
 	blockRuntimeId?: number;
 	canDestroy?: string[];
 	canPlaceOn?: string[];
@@ -12,20 +28,21 @@ export interface ItemLegacyLike{
 	ticking?: bigint;
 }
 export class ItemLegacy extends ProtocolType {
-	public static From(
-		networkId: number,
-		count?: number,
-		metadata?: number,
-		blockRuntimeId?: number
-	) {
+	public static From(networkId: number, count?: number, metadata?: number, blockRuntimeId?: number) {
 		const that = new this();
 		that.networkId = networkId;
-		that.count = count??1;
+		that.count = count ?? 1;
 		that.metadata = metadata;
 		that.blockRuntimeId = blockRuntimeId;
 	}
-	public setCanPlaceOn(blocks: string[]){this.canPlaceOn = blocks; return this;}
-	public setCanDestroy(blocks: string[]){this.canDestroy = blocks; return this;}
+	public setCanPlaceOn(blocks: string[]) {
+		this.canPlaceOn = blocks;
+		return this;
+	}
+	public setCanDestroy(blocks: string[]) {
+		this.canDestroy = blocks;
+		return this;
+	}
 	public blockRuntimeId?: number;
 	public count: number = 1;
 	public metadata?: number;
@@ -36,7 +53,7 @@ export class ItemLegacy extends ProtocolType {
 	public data?: any;
 	public Deserialize(that: Constructor<this>, stream: BinaryStream, endian?: Endianness | undefined): this {
 		const thats = new that();
-        
+
 		const networkId = stream.readZigZag();
 		if (networkId === 0) return thats; // air
 
@@ -46,20 +63,22 @@ export class ItemLegacy extends ProtocolType {
 		thats.blockRuntimeId = stream.readZigZag();
 
 		const extrasLength = stream.readVarInt(); // useLess but in need
-        
+
 		if (stream.readUint16(Endianness.Little) === 0xffff) {
 			const version = stream.readByte(); // unknown prefix 0x01 is used, when zero maybe its version of NBT
-			if(version) thats.data = BedrockNBT.ReadRootTag(stream);
+			if (version) thats.data = BedrockNBT.ReadRootTag(stream);
 		}
 
 		const canPlaceStrings: string[] = [];
-		for (let i = 0; i < stream.readInt32(Endianness.Little); i++) canPlaceStrings.push(stream.readString32(Endianness.Little));
+		for (let i = 0; i < stream.readInt32(Endianness.Little); i++)
+			canPlaceStrings.push(stream.readString32(Endianness.Little));
 		thats.canPlaceOn = canPlaceStrings;
-        
+
 		const canDestroyStrings: string[] = [];
-		for (let i = 0; i < stream.readInt32(Endianness.Little); i++) canDestroyStrings.push(stream.readString32(Endianness.Little));
+		for (let i = 0; i < stream.readInt32(Endianness.Little); i++)
+			canDestroyStrings.push(stream.readString32(Endianness.Little));
 		thats.canDestroy = canDestroyStrings;
-        
+
 		if (networkId === 357) {
 			thats.ticking = stream.readInt64(Endianness.Little);
 		}
@@ -68,30 +87,30 @@ export class ItemLegacy extends ProtocolType {
 	}
 	public Serialize(that: Constructor<this>, stream: BinaryStream, value: this, endian?: Endianness | undefined): void {
 		// eslint-disable-next-line no-param-reassign
-		value = value??{};
-		stream.writeZigZag(value.networkId??0);
+		value = value ?? {};
+		stream.writeZigZag(value.networkId ?? 0);
 		// If the item is air, we continue
-		if ((value.networkId??0) === 0) return;
-		stream.writeUint16(value.count??1, Endianness.Little);
-		stream.writeVarInt(value.metadata??0);
-		stream.writeZigZag(value.blockRuntimeId??0);
+		if ((value.networkId ?? 0) === 0) return;
+		stream.writeUint16(value.count ?? 1, Endianness.Little);
+		stream.writeVarInt(value.metadata ?? 0);
+		stream.writeZigZag(value.blockRuntimeId ?? 0);
 
 		// Nbt data
 		const extras = new BinaryStream();
 		const hasNbt = typeof value.data === "object";
-		extras.writeUint16(hasNbt?0xffff:0x0000, Endianness.Little);
+		extras.writeUint16(hasNbt ? 0xffff : 0x0000, Endianness.Little);
 		if (hasNbt) {
 			extras.writeByte(0x01); // version
 			BedrockNBT.WriteRootTag(extras, value.data);
 		}
 
 		// CanPlaceOn data
-		extras.writeInt32(value.canPlaceOn?.length??0, Endianness.Little);
-		for (const string of value.canPlaceOn) extras.writeString32(string, Endianness.Little);
+		extras.writeInt32(value.canPlaceOn?.length ?? 0, Endianness.Little);
+		for (const string of value.canPlaceOn ?? []) extras.writeString32(string, Endianness.Little);
 
 		// CanDestroy data
-		extras.writeInt32(value.canDestroy?.length??0, Endianness.Little);
-		for (const string of value.canDestroy) extras.writeString32(string, Endianness.Little);
+		extras.writeInt32(value.canDestroy?.length ?? 0, Endianness.Little);
+		for (const string of value.canDestroy ?? []) extras.writeString32(string, Endianness.Little);
 
 		// Check if item is "minecraft:	"
 		if (value.networkId === 357) {
@@ -106,39 +125,43 @@ export class ItemLegacy extends ProtocolType {
 		stream.writeBuffer(buff);
 	}
 }
-export const ItemEntries = NewSerializable((stream, value: ItemLegacyLike[]) => {
-	stream.writeVarInt(value?.length??0);
-	let i = 1;
-	for (const v of value??[]) {
-		stream.writeVarInt(i++); // entryId
-		ItemLegacy.prototype.Serialize(ItemLegacy, stream, v as ItemLegacy);
-	}
-}, (str)=>{
-	const arr = [] as ItemLegacy[];
-	const length = str.readVarInt();
-	for (let i = 0; i < length; i++) {
-		const entryId = str.readVarInt();
-		arr.push(ItemLegacy.prototype.Deserialize(ItemLegacy, str));
-	}
+export const ItemEntries = NewSerializable(
+	(stream, value: ItemLegacyEntryLike[]) => {
+		stream.writeVarInt(value?.length ?? 0);
+		for (const v of value ?? []) {
+			stream.writeVarInt(v.entryId); // entryId
+			ItemLegacy.prototype.Serialize(ItemLegacy, stream, v.item as ItemLegacy);
+		}
+	},
+	(str) => {
+		const arr = [] as ItemLegacyEntryLike[];
+		const length = str.readVarInt();
+		for (let i = 0; i < length; i++) {
+			const entryId = str.readVarInt();
+			arr.push({entryId,item:ItemLegacy.prototype.Deserialize(ItemLegacy, str)});
+		}
 
-	return arr;
-});
+		return arr;
+	},
+);
 
-export class ItemState extends ProtocolSerializable { // VarInt
-    @SerializeAs(VarString)	public id!: string;
-    @SerializeAs(Int16, Endianness.Little)	public runtimeId!: number;
-    @SerializeAs(Boolean)	public componentBased!: number;
+export class ItemState extends ProtocolSerializable {
+	// VarInt
+	@SerializeAs(VarString) public id!: string;
+	@SerializeAs(Int16, Endianness.Little) public runtimeId!: number;
+	@SerializeAs(Boolean) public componentBased!: number;
 }
-export class ItemComponent extends ProtocolSerializable { // VarInt
-    @SerializeAs(VarString) public name!: string;
-    @SerializeAs(LRootTag) public data!: any;
+export class ItemComponent extends ProtocolSerializable {
+	// VarInt
+	@SerializeAs(VarString) public name!: string;
+	@SerializeAs(LRootTag) public data!: any;
 }
 export interface ItemComponentLike {
 	data: any;
 	typeId: string;
 }
 export interface ItemStateLike {
-    componentBase?: boolean;
-    id: string;
-    runtimeId: number;
+	componentBase?: boolean;
+	id: string;
+	runtimeId: number;
 }
