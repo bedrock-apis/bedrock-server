@@ -29,6 +29,7 @@ export class ViewManager {
 	public renderCache = 4;
 	public chunksArea = new Set<bigint>();
 	public renderNewChunks = new Set<bigint>();
+	public allocated = new Set<bigint>();
 	public lastRenderFor = -6_646_546_546_546n;
 	public get dimension() {
 		return this.player.dimension;
@@ -42,9 +43,6 @@ export class ViewManager {
 	public constructor(player: Player) {
 		this.player = player;
 		this.context = player.context;
-	}
-	public clear() {
-		return this.chunkManager.clear();
 	}
 	public _onRecalculate(chunkRadius: number) {
 		const data = this.player.blockLocation;
@@ -61,14 +59,19 @@ export class ViewManager {
 				const zz = Z + z;
 				const hash = Chunk.getHash(xx, zz);
 				theSet.add(hash);
-				if (!currentChunks.delete(hash)) this.renderNewChunks.add(hash);
+				if (!currentChunks.delete(hash)) { this.renderNewChunks.add(hash); }
 			}
 		}
 
 		power = (chunkRadius + 4) ** 2;
+		const cm = this.chunkManager;
 		for (const hash of currentChunks) {
 			const { x, z } = Chunk.fromHash(hash);
 			if (x ** 2 + z ** 2 < power) theSet.add(hash);
+			else {
+				this.allocated.delete(hash);
+				cm.dealloc(hash);
+			}
 		}
 
 		this.chunksArea = theSet;
@@ -86,7 +89,8 @@ export class ViewManager {
 			packet.chunkCoords = [];
 			let c = 0;
 			for (const hash of this.renderNewChunks) {
-				const chunk = this.chunkManager.open(hash);
+				this.allocated.add(hash);
+				const chunk = this.chunkManager.alloc(hash);
 				this.context.updates.add(new ChunkData(this, chunk));
 				packet.chunkCoords.push(chunk.position);
 				this.renderNewChunks.delete(hash);
@@ -95,5 +99,12 @@ export class ViewManager {
 
 			this.context.updates.add(packet);
 		}
+	}
+	public clear(){
+		const cm = this.chunkManager;
+		for(const allocated of this.allocated) cm.dealloc(allocated);
+		this.allocated.clear();
+		this.renderNewChunks.clear();
+		this.chunksArea.clear();
 	}
 }

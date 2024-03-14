@@ -16,6 +16,7 @@ import type {
 	RequestChunkRadiusPacket,
 	PlayerActionPacket,
 	TextPacket,
+	ModalFormResponsePacket,
 } from "@bedrock/protocol";
 import { CompressionMethod, DisconnectPacket } from "@bedrock/protocol";
 import { Priority } from "@serenityjs/raknet-protocol";
@@ -39,6 +40,7 @@ interface PacketResolverMap {
 	[PacketIds.Interact]: InteractPacket;
 	[PacketIds.PlayerAction]: PlayerActionPacket;
 	[PacketIds.Text]: TextPacket;
+	[PacketIds.ModalFormResponse]: ModalFormResponsePacket
 }
 type PacketResolver = {
 	[k in keyof PacketResolverMap]?: (client: Client, packet: PacketResolverMap[k], packetId: number) => any;

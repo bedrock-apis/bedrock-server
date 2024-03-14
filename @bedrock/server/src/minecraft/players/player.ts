@@ -1,5 +1,5 @@
 import type { PlayerAttributeLike } from "@bedrock/protocol";
-import { AttributeComponentIds, GameMode, UpdateAttributesPacket } from "@bedrock/protocol";
+import { AttributeComponentIds, ChatTypes, GameMode, TextPacket, ToastRequestPacket, UpdateAttributesPacket } from "@bedrock/protocol";
 import { KernelConstruct, KernelPrivate } from "../../kernel/base.js";
 import type { Client } from "../../network/Client.js";
 import type { Postable } from "../../types/postable.js";
@@ -8,6 +8,8 @@ import type { AttributeComponent } from "../entities/BaseComponents.js";
 import { EntityComponentId, type HealthComponent } from "../entities/EntityComponents.js";
 import { Entity } from "../entities/entity.js";
 import { ConstructAbilities, type Abilities } from "./abilities.js";
+import type { FormData, FormTimeoutRejection} from "./form_manager.js";
+import { FormManager } from "./form_manager.js";
 import { ContextArea } from "./ticking.js";
 import { playerType } from "./type.js";
 import { ViewManager } from "./view_manager.js";
@@ -101,6 +103,7 @@ export class Player extends Entity {
 	public readonly gameMode = GameMode.Survival;
 	public readonly context;
 	public readonly viewManager;
+	public readonly formManager;
 	protected constructor(dimension: Dimension, client: Client) {
 		KernelPrivate(new.target);
 		super(playerType, dimension);
@@ -118,6 +121,7 @@ export class Player extends Entity {
 			}
 		}
 
+		this.formManager = new FormManager(this);
 		this.context = new ContextArea(this);
 		this.viewManager = new ViewManager(this);
 		this._onInit();
@@ -191,6 +195,37 @@ export class Player extends Entity {
 	public _onReady(){
 		this.getComponent(EntityComponentId.Movement)!.currentValue = this._getDefaultMovement();
 		this.getComponent(EntityComponentId.Health)?.setToEffectiveMax();
+	}
+	
+	
+	/// //////////////////////////////////////////
+	/// //////////////////////////// Methods under this section used to be for end-use usage, these methods are not likely called by this engine
+	/// //////////////////////////////////////////
+	
+	
+	/**
+	 * @param form Forms that you want to show
+	 * @returns Promise with resolved data or cancaletion info
+	 * @throws {FormTimeoutRejection} This method can trow FormTimeoutRejection
+	 */
+	public async sendForm<T extends FormData<any>>(form: T){return form.show(this);}
+	/**
+	 * Shows a toast pop-up for this player
+	 *
+	 * @param title Title of the toast
+	 * @param message Message in the toast
+	 */
+	public sendToastPopup(title: string, message: string){
+		const data = new ToastRequestPacket();
+		data.title = String(title);
+		data.message = String(message);
+		this.context.updates.add(data);
+	}
+	public sendMessage(message: string){
+		const data = new TextPacket();
+		data.message = message;
+		data.type = ChatTypes.Raw;
+		this.context.updates.add(data);
 	}
 }
 export function ConstructPlayer(dimension: Dimension, client: Client): Player {

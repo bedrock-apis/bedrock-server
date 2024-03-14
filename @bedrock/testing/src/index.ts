@@ -1,25 +1,25 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import { DimensionTypes, Engine, VanillaDimensionTypeId, protocol, LoaderType, PerlinGenerator, Plugin, EntityComponentId } from "@bedrock/server";
-
-const {ModalFormRequestPacket, ToastRequestPacket} = protocol;
+import { DimensionTypes, Engine, VanillaDimensionTypeId, protocol, LoaderType, PerlinGenerator, Plugin, EntityComponentId, GameMode, MessageFormData, CancelationReason } from "@bedrock/server";
 
 class Player1 extends Plugin.getClass("Player"){
 	public _onTextReceived<T extends { message: string; sourceName: string; }>(options: T): T | undefined {
 		options.sourceName = `§4${options.sourceName}§r`;
-		const r = new ModalFormRequestPacket();
-		r.formId = 654;
-		r.jsonPayload = JSON.stringify({title: "Lmao", type: "modal", content:"Lmao just testing rn", button1: "Hello", button2: "hello2"});
-		this.engine.runTimeout(()=>this._onUpdate(r), 200);
+		this.engine.runTimeout(async ()=>{
+			const data = await new MessageFormData("Your message: " + options.message,"Title").show(this);
+			if(data.canceled) console.log("Canceled: " + CancelationReason[data.cancelationReason!]);
+			else console.log("Selection: " + data.selection);
+		}, 200);
 		return super._onTextReceived(options);
 	}
 	public _onReady(): void {
 		const component = this.getComponent(EntityComponentId.Health)!;
 		component.effectiveMax = 40;
 		super._onReady();
-		const toast = new ToastRequestPacket();
-		toast.title = "§eYour are welcome " + this.name;
-		toast.message = "Build, mine, travel, anything you want! You can visit our discord as well.";
-		this._onUpdate(toast);
+		this.sendToastPopup("§eYour are welcome " + this.name, "Build, mine, travel, anything you want! You can visit our discord as well.");
+		this.sendMessage("Testing message send");
+	}
+	public _onInit(): void {
+		(this as any).gameMode = GameMode.Creative;
 	}
 }
 class MyPlugin extends Plugin{
@@ -36,18 +36,10 @@ Engine.LoadResource(LoaderType.CreativeItems, readFileSync("data/" + LoaderType.
 engine.world.createDimension(
 	"bedrock:overworld",
 	DimensionTypes.get(VanillaDimensionTypeId.Overworld)!,
-	new PerlinGenerator(0, 1, 80,  4.236_489_301_935 * 5),
+	new PerlinGenerator(0, 1, 40,  4.236_489_301_935 * 3),
 );
 engine.Start({
 	address: "0.0.0.0",
 	protocol: 649,
 });
-
-
 console.log("Server started!");
-
-
-/*
-const protocol = JSON.parse(readFileSync("protocol.json").toString("utf8"));
-GenerateProtocol(protocol);
-*/
