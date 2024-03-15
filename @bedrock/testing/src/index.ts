@@ -1,11 +1,11 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import { DimensionTypes, Engine, VanillaDimensionTypeId, protocol, LoaderType, PerlinGenerator, Plugin, EntityComponentId, GameMode, MessageFormData, CancelationReason } from "@bedrock/server";
+import { DimensionTypes, Engine, VanillaDimensionTypeId, LoaderType, PerlinGenerator, Plugin, EntityComponentId, GameMode, MessageFormData, CancelationReason, ActionFormData } from "@bedrock/server";
 
 class Player1 extends Plugin.getClass("Player"){
 	public _onTextReceived<T extends { message: string; sourceName: string; }>(options: T): T | undefined {
 		options.sourceName = `§4${options.sourceName}§r`;
 		this.engine.runTimeout(async ()=>{
-			const data = await new MessageFormData("Your message: " + options.message,"Title").show(this);
+			const data = await new ActionFormData("Title: " + this.name, "Your message: " + options.message).button("Lmao","textures/items/apple").show(this);
 			if(data.canceled) console.log("Canceled: " + CancelationReason[data.cancelationReason!]);
 			else console.log("Selection: " + data.selection);
 		}, 200);
@@ -36,7 +36,7 @@ Engine.LoadResource(LoaderType.CreativeItems, readFileSync("data/" + LoaderType.
 engine.world.createDimension(
 	"bedrock:overworld",
 	DimensionTypes.get(VanillaDimensionTypeId.Overworld)!,
-	new PerlinGenerator(0, 1, 40,  4.236_489_301_935 * 3),
+	new PerlinGenerator(0, 1, 40,  4.236_489_301_935 * 4),
 );
 engine.Start({
 	address: "0.0.0.0",

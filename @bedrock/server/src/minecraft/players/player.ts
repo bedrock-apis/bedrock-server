@@ -126,17 +126,13 @@ export class Player extends Entity {
 		this.viewManager = new ViewManager(this);
 		this._onInit();
 	}
-	public isValid(): boolean {
-		return super.isValid() && this.engine.players.has(this);
-	}
+	public isValid(): boolean { return super.isValid() && this.engine.players.has(this); }
 	public _updateAll() {
 		this._onUpdate(this.abilities);
 		this._onUpdate(this._attributes);
 		super._updateAll();
 	}
-	public _updateFor(me: Postable) {
-		this._onUpdate(me);
-	}
+	public _updateFor(me: Postable) { this._onUpdate(me); }
 	/**
 	 * Runs every tick
 	 * Updates viewManager
@@ -196,8 +192,6 @@ export class Player extends Entity {
 		this.getComponent(EntityComponentId.Movement)!.currentValue = this._getDefaultMovement();
 		this.getComponent(EntityComponentId.Health)?.setToEffectiveMax();
 	}
-	
-	
 	/// //////////////////////////////////////////
 	/// //////////////////////////// Methods under this section used to be for end-use usage, these methods are not likely called by this engine
 	/// //////////////////////////////////////////

@@ -166,10 +166,10 @@ export class PerlinGenerator extends TerrainGenerator {
 				Y += (getNoise(S1 * 3, S2 * 3, p3, this.proximity) * i) / 10;
 				// for (let y = 0; y > Y ; y--) chunk.setBlock(x, y, z, this.water);
 				Y *= getNoise(S1 / 30, S2 / 30, p4, this.proximity) * 1.6;
-				chunk.setBlock(x, Y, z, plt[Math.trunc(Math.random() * length)]);
 				if (Math.random() > 0.995) chunk.setBlock(x, Y + 1, z, this.torch);
-				for (let y = Y - 1; y > -64; y--) chunk.setBlock(x, y, z, this.stone);
-				for (let y = Y - 1; y < 30; y++) chunk.setBlock(x, y, z, this.water);
+				for (let y = Y; y > -64; y--) chunk.setBlock(x, y, z, this.stone);
+				for (let y = Y ; y <= 30; y++) chunk.setBlock(x, y, z, this.water);
+				if(Y >= 29) chunk.setBlock(x, Y, z, plt[Math.trunc(Math.random() * length)]);
 			}
 		}
 

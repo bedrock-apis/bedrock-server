@@ -3,17 +3,12 @@ import { ModalFormRequestPacket } from "@bedrock/protocol";
 import type { Player } from "./plugs.js";
 
 let ids = 0;
+
+/// ////////// GENERAL
 export class FormResponse{
     public readonly canceled: boolean;
     public readonly cancelationReason?: CancelationReason;
     protected constructor(canceled?: boolean, reason?: CancelationReason){ this.canceled = canceled??true; this.cancelationReason = reason; }
-}
-export class MessageFormResponse extends FormResponse{
-    public readonly selection?: 0 | 1;
-    public constructor(value: any, reason?: CancelationReason){
-        super(reason !== undefined, reason);
-        if(reason === undefined) this.selection = value?1:0;
-    }
 }
 export class FormTimeoutRejection extends ReferenceError{
     public constructor(){super("Form has timed out.");}
@@ -42,11 +37,23 @@ export class FormData<T extends FormResponse>{
 	public title(title: string){this._title = title; return this;}
     public async show(player: Player): Promise<T>{ return player.formManager.sendForm(this); }
 }
+
+
+
+/// ///////////////// MESSAGE FORM
+
+export class MessageFormResponse extends FormResponse{
+    public readonly selection?: 0 | 1;
+    public constructor(value: any, reason?: CancelationReason){
+        super(reason !== undefined, reason);
+        if(reason === undefined) this.selection = value?1:0;
+    }
+}
 export class MessageFormData extends FormData<MessageFormResponse>{
 	protected _button1: string;
 	protected _button2: string;
     protected _content: string = "CONTENT";
-	public constructor(body?: string, title?: string){
+	public constructor(title?: string, body?: string){
 		super(FormType.MessageForm, title);
         if(body) this._content = body;
 		this._button1 = "button1";
@@ -72,18 +79,49 @@ export class MessageFormData extends FormData<MessageFormResponse>{
         return this;
     }
 }
-/*
-export class ActionFormData extends FormData{
-	protected buttons: any[] = [];
-	public constructor(body?: string, title?: string){
+
+
+
+export interface ActionFormButton{
+    image?: {
+        data: string,
+        type: "path" | "url"
+    },
+    text: string
+}
+export class ActionFormResponse extends FormResponse{
+    public readonly selection?: number;
+    public constructor(value: any, reason?: CancelationReason){
+        super(reason !== undefined, reason);
+        if(reason === undefined) this.selection = Number(value);
+    }
+}
+export class ActionFormData extends  FormData<ActionFormResponse>{
+	protected _buttons: ActionFormButton[] = [];
+    protected _content: string = "CONTENT";
+	public constructor(title?: string, body?: string){
 		super(FormType.ActionForm, title);
+        if(body) this._content = body;
 	}
 	public toJSON(){
 		const data = super.toJSON();
-		data.buttons =this.buttons;
+		data.buttons = this._buttons;
+        data.content = this._content;
 		return data;
 	}
-}*/
+    public button(content: string, icon?: string, isUrl: boolean = false){
+        if(icon) this._buttons.push({text: content, image: {data: icon, type: isUrl?"url":"path"}});
+        else this._buttons.push({text: content});
+        return this;
+    }
+    public body(content: string){
+        this._content = content;
+        return this;
+    }
+}
+
+
+
 export class FormManager{
     protected readonly forms = new Map<number, {callback(T: any): void, timeout: NodeJS.Timeout, type:FormType}>();
     public readonly player;
@@ -96,7 +134,6 @@ export class FormManager{
         const data = payload.toJSON();
         packet.jsonPayload = JSON.stringify(payload);
         this.player.context.updates.add(packet);
-        console.log("Sent: " + id);
         return new Promise((resolve, reject)=>{
             const timeout = setTimeout(()=>{
                 this.forms.delete(id);
@@ -107,17 +144,17 @@ export class FormManager{
     }
     public resolve(packet: ModalFormResponsePacket){
         const id = packet.formId;
-        console.log("Received: " + id);
+        const payload = packet.jsonPayload;
         const data = this.forms.get(id);
         if(data){
             clearTimeout(data.timeout);
             this.forms.delete(id);
             switch(data.type){
                 case FormType.MessageForm:
-                    data.callback(new MessageFormResponse(packet.jsonPayload?.startsWith("true"),packet.cancelationReason));
+                    data.callback(new MessageFormResponse(payload?.startsWith("true"),packet.cancelationReason));
                     break;
                 default:
-                    console.log(packet);
+                    data.callback(new MessageFormResponse(payload?Number(payload):undefined,packet.cancelationReason));
                     break;
             }
         }

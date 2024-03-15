@@ -40,6 +40,7 @@ export class ResourcePackStackPacket extends ProtocolPacket {
 	@SerializeAs(VarString) public gameVersion!: string;
 	@SerializeAs(Experiment) @AsList(Int32, Endianness.Little) public experiments!: Experiment[];
 	@SerializeAs(Bool) public experimentsPreviouslyToggled!: boolean;
+	// @SerializeAs(Bool) public includeEditorPacks!: boolean; 1.20.80
 }
 @PacketId(PacketIds.ResourcePackClientResponse)
 export class ResourcePackClientResponsePacket extends ProtocolPacket {
