@@ -24,3 +24,5 @@ export * from "./Text.js";
 export * from "./ToastRequest.js";
 export * from "./Forms.js";
 export * from "./dimension-data.js";
+export * from "./InventoryTransaction.js";
+export * from "./UpdateBlock.js";

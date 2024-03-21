@@ -262,6 +262,13 @@ export class World {
 				value: 100,
 			},
 		];
+		packet.experimentalGameplayOverride = true;
+		packet.experiments = [
+			{enabled: true, name: "armadilo"},
+			{enabled: true, name: "updateAnnouncedLive2023"},
+			{enabled: true, name: "experiments_ever_used"},
+			{enabled: true, name: "saved_with_toggled_experiments"}
+		];
 		return packet;
 	}
 }

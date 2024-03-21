@@ -3,7 +3,7 @@ import type { BlockPermutation } from "../public.js";
 import { SubChunk } from "./SubChunk.js";
 
 export class Chunk {
-	public static readonly MAX_SUB_CHUNKS = 4 + 16;
+	public static readonly MAX_SUB_CHUNKS = 4 + 40;
 
 	public readonly position: { x: number; z: number };
 	public readonly hash;

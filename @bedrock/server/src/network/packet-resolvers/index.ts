@@ -10,3 +10,4 @@ import "./PlayerAction.js";
 import "./ContainerClose.js";
 import "./Text.js";
 import "./FormResponse.js";
+import "./InventoryTransaction.js";

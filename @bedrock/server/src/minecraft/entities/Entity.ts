@@ -17,7 +17,6 @@ let runtimeIds = -5_468_466_546n;
 export class Entity {
 	// eslint-disable-next-line @typescript-eslint/no-use-before-define
 	public readonly entityData = new EntityDatas(this);
-
 	/**
 	 * Protected
 	 */
@@ -25,10 +24,10 @@ export class Entity {
 	protected readonly _metadatas = new Set<MetadataEntry>();
 	protected readonly _metadataPacket;
 	protected readonly _allMetadatas;
+	protected readonly _status;
 	/**
 	 * Public
 	 */
-	public readonly onUpdate = new PublicEvent<[Entity, Postable]>();
 	public get typeId() {
 		return this.type.id;
 	}
@@ -36,10 +35,14 @@ export class Entity {
 		const { x, y, z } = this.location;
 		return Vec3(Math.trunc(x), Math.trunc(y), Math.trunc(z));
 	}
-	public readonly location: Vector3;
-	public readonly rotation: Vector2;
-	public readonly dimension: Dimension;
-	public readonly world: World;
+	public get isSprinting(){return this._status.isSprinting;}
+	public get isGliding(){return this._status.isGliding;}
+	public get isSneaking(){return this._status.isSneaking;}
+	public get isFlying(){return this._status.isCanFly;}
+	public location: Vector3;
+	public rotation: Vector2;
+	public dimension: Dimension;
+	public world: World;
 	public readonly type: EntityType;
 	public readonly behavior: EntityBehavior;
 	public readonly id: bigint = entityIds++;
@@ -68,7 +71,12 @@ export class Entity {
 		const [packet, allMetadatas] = this.behavior.buildEntity(this, this._components);
 		this._metadataPacket = packet;
 		this._allMetadatas = allMetadatas;
+		this._status = this.getComponent(EntityComponentId.StatusProperties)!;
 	}
+	
+	
+	
+	public readonly onUpdate = new PublicEvent<[Entity, Postable]>();
 	public _updateAll() {
 		const packet = new UpdateEntityDataPacket();
 		packet.metadata = this._allMetadatas;

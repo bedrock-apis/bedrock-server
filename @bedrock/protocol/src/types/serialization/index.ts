@@ -11,3 +11,4 @@ export * from "./MetadataEntry.js";
 export * from "./EntityProperties.js";
 export * from "./Skin.js";
 export * from "./Record.js";
+export * from "./TransactionAction.js";

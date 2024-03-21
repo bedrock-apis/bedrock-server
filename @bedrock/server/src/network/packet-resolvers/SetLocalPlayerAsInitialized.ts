@@ -9,7 +9,7 @@ ClientPacketResolvers[PacketIds.SetLocalPlayerAsInitialized] = async (client, pa
 	client.engine.entities.add(client.player);
 	client.player._onSetup();
 	const creative = new CreativeContentPacket();
-	creative.items = creativeItems.map((e,i)=>({entryId: i + 1, item: e}));
+	creative.items = creativeItems.map((e,i)=>({entryId: i, item: e}));
 	client.post([creative]);
 	client.engine.runTimeout(()=>client.player._onReady(), 1);
 };

@@ -31,6 +31,10 @@ export class DataPackInfo extends ProtocolSerializable {
 	@SerializeAs(VarString) public version!: string;
 	@SerializeAs(VarString) public name!: string;
 }
+export interface ExperimentLike{
+	 enabled: boolean;
+	 name: string;
+}
 export class Experiment extends ProtocolSerializable {
 	// stream.readInt32(Endianness.Little);
 	@SerializeAs(VarString) public name!: string;

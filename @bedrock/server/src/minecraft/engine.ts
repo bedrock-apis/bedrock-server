@@ -48,7 +48,7 @@ export class Engine {
 	public currentTick = 0n;
 	public oldPerformance = performance.now();
 	public delta = 0;
-	protected tick() {
+	protected tick<T extends (selfF: T)=>void>(selfF: T) {
 		this.oldPerformance = performance.now();
 		if(this.currentTick++ >> 4n & 0b1n) this.postables.add(this);
 		TriggerEvent(this.onTick, {engine:this,currentTick:this.currentTick}).catch(this.logger.error);
@@ -67,7 +67,10 @@ export class Engine {
 		const now = performance.now();
 		this.delta = now - this.oldPerformance;
 		this.oldPerformance = now;
+		// const tps = 1_000/this.delta;
+		// if(tps < 50) console.log(tps, this.delta);
 		if (this.delta > 100) this.logger.warn("[TICK-FREEZING]", this.delta.toFixed(2) + "ms");
+		setTimeout(selfF, 40 - this.delta, selfF);
 	}
 	public *__packets() {
 		for (const packet of this.postables) yield packet.toPacket();
@@ -89,7 +92,8 @@ export class Engine {
 		this.world = new World(this);
 		this.server = new Server(this);
 		loaders[LoaderType.BlockDefinitions] = this.NewCanonicalBlockLoader.bind(this);
-		setInterval(async () => this.tick(), 0);
+		const t = this.tick.bind(this);
+		setTimeout(t, 0, t);
 		setInterval(() => {
 			console.log("Current delta: " + this.delta);
 		}, 15_000);

@@ -47,6 +47,7 @@ export abstract class ProtocolSerializable extends ProtocolType {
 				}
 			}
 
+			if(theType === null) continue;
 			if (asArray) {
 				const { type: lType, endian: lEndian } = arrayType;
 				const length = v?.length ?? 0;
@@ -133,7 +134,7 @@ export function WriteOnly<T extends ProtocolSerializable>() {
 }
 
 export function Dynamic<T extends ProtocolSerializable, P extends any[]>(
-	type: (that: T, ...params: P) => RawSerializable<any>,
+	type: (that: T, ...params: P) => RawSerializable<any> | null,
 	preferedEndian?: Endianness,
 	...params: P
 ) {

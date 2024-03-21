@@ -18,7 +18,7 @@ export class CreativeItem implements ItemLegacyLike {
 	public get networkId() { return this.type.runtimeId; }
 	public ticking?: bigint;
 }
-export const creativeItems: CreativeItem[] = [];
+export const creativeItems: ItemLegacyLike[] = [];
 export function CreativeItemDefinitionLoader(buffer: Buffer) {
 	const object = JSON.parse(buffer.toString("utf8"));
 	for (const { meta, name, nbt, block_states } of object) {
@@ -57,7 +57,12 @@ export function CreativeItemDefinitionLoader(buffer: Buffer) {
 			{ lvl: Int16(10), id: Int16(10) },
 		],
 	};
-	creativeItems.push(betterSword);
+	// creativeItems.push(betterSword);
+	 // creativeItems.push({count:2, networkId: 618});
+	/* for(const c of creativeItems) {
+		if(!c.data) c.data = {};
+		c.data.display = {Lore:[ItemTypes.getByRuntimeId(c.networkId)?.id??"UNDEFINED"]};
+	}*/
 }
 
 export class CreativeItemRegister {

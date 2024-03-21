@@ -23,7 +23,7 @@ import {
 	PacketIds,
 	PacketId,
 } from "@bedrock/base";
-import type { GameRuleLike, ItemStateLike } from "../types/index.js";
+import type { ExperimentLike, GameRuleLike, ItemStateLike } from "../types/index.js";
 import {
 	BlockCoordinates,
 	BlockProperty,
@@ -68,7 +68,7 @@ export class GameInitializePacket extends ProtocolPacket {
 	@SerializeAs(Bool) public commandsEnabled!: boolean;
 	@SerializeAs(Bool) public texturePacksRequired!: boolean;
 	@SerializeAs(GameRule) @AsList(VarInt) public gamerules!: GameRuleLike[];
-	@SerializeAs(Experiment) @AsList(Int32, Endianness.Little) public experiments!: Experiment[];
+	@SerializeAs(Experiment) @AsList(Int32, Endianness.Little) public experiments!: ExperimentLike[];
 	@SerializeAs(Bool) public experimentsPreviouslyToggled!: boolean;
 	@SerializeAs(Bool) public bonusChest!: boolean;
 	@SerializeAs(Bool) public mapEnabled!: boolean;
